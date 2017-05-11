@@ -1,0 +1,40 @@
+
+buildscript {
+    ext {
+        esVersion = "5.3.0"
+        prometheusVersion = "0.0.21"
+    }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.elasticsearch.gradle:build-tools:${esVersion}")
+    }
+}
+
+def projectVersion = "0.1-${esVersion}"
+
+group 'pl.suchenia.esmonitor'
+version projectVersion
+
+apply plugin: 'idea'
+apply plugin: 'elasticsearch.esplugin'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencyLicenses.enabled = false
+licenseHeaders.enabled = false
+test.enabled = false
+
+esplugin {
+    description 'Elasticsearch plugin to export status data in prometheus.io format'
+    classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
+    version projectVersion
+}
