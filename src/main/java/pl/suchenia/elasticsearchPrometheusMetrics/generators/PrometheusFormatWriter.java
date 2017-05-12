@@ -26,22 +26,24 @@ public class PrometheusFormatWriter {
     }
 
     public void generateValue(String entryName, long value) throws IOException {
-        writer.append(entryName);
-        writer.append(" ");
-        writer.append(Double.toString((double) value));
-
+        generateValue(entryName, null, null, value);
     }
 
     public void generateValue(String entryName, String labelName, String labelValue, long value) throws IOException {
         writer.append(entryName);
-        writer.append("{");
-        writer.append(labelName);
-        writer.append("=\"");
-        writeEscapedLabelValue(labelValue);
-        writer.append("\",} ");
+        if (labelName != null && labelValue != null) {
+            writer.append("{");
+            writer.append(labelName);
+            writer.append("=\"");
+            writeEscapedLabelValue(labelValue);
+            writer.append("\",} ");
+        } else {
+            writer.append(" ");
+        }
         writer.append(Double.toString((double) value));
-
+        writer.append("\n");
     }
+
     private void writeEscapedHelp(String help) throws IOException {
         for (int i = 0; i < help.length(); i++) {
             char c = help.charAt(i);

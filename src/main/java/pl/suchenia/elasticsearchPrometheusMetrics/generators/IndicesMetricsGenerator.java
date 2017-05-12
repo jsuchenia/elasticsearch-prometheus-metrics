@@ -34,16 +34,18 @@ public class IndicesMetricsGenerator {
         writer.generateGaugeHelp("es_docindex_currnet", "Number of active index operations");
         writer.generateGaugeHelp("es_docindex_isthrotled", "Flag to check is node throttled");
 
-        for (Map.Entry<String, IndexingStats.Stats> entry : indices.getIndexing().getTypeStats().entrySet()) {
-            String index = entry.getKey();
-            IndexingStats.Stats stats = entry.getValue();
+        if (indices.getIndexing().getTypeStats() != null) {
+            for (Map.Entry<String, IndexingStats.Stats> entry : indices.getIndexing().getTypeStats().entrySet()) {
+                String index = entry.getKey();
+                IndexingStats.Stats stats = entry.getValue();
 
-            writer.generateValue("es_docindex_count", "index", index, stats.getIndexCount());
-            writer.generateValue("es_docindexfailed_count", "index", index, stats.getIndexFailedCount());
-            writer.generateValue("es_docdelete_count", "index", index, stats.getDeleteCount());
-            writer.generateValue("es_docdelete_current", "index", index, stats.getDeleteCurrent());
-            writer.generateValue("es_docindex_currnet", "index", index, stats.getIndexCurrent());
-            writer.generateValue("es_docindex_isthrotled", "index", index, stats.isThrottled() ? 1 : 0);
+                writer.generateValue("es_docindex_count", "index", index, stats.getIndexCount());
+                writer.generateValue("es_docindexfailed_count", "index", index, stats.getIndexFailedCount());
+                writer.generateValue("es_docdelete_count", "index", index, stats.getDeleteCount());
+                writer.generateValue("es_docdelete_current", "index", index, stats.getDeleteCurrent());
+                writer.generateValue("es_docindex_currnet", "index", index, stats.getIndexCurrent());
+                writer.generateValue("es_docindex_isthrotled", "index", index, stats.isThrottled() ? 1 : 0);
+            }
         }
     }
 }
