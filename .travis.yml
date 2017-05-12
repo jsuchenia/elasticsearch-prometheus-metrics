@@ -3,4 +3,7 @@ jdk:
   - oraclejdk8
 dist: trusty
 sudo: required
-script: ./gradlew build
+script:
+  - ./gradlew -P esVersion=5.3.0 build
+  - ./gradlew -P esVersion=5.3.1 build
+  - ./gradlew -P esVersion=5.3.2 build

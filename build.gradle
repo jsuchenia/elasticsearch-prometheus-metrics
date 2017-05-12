@@ -1,21 +1,16 @@
 
 buildscript {
-    ext {
-        esVersion = "5.3.2"
-    }
-
     repositories {
         mavenCentral()
         jcenter()
     }
 
     dependencies {
-        classpath("org.elasticsearch.gradle:build-tools:${esVersion}")
+        classpath("org.elasticsearch.gradle:build-tools:${project.esVersion}")
     }
 }
 
-def projectVersion = "dev"
-def generatedVersion = "${projectVersion}-${esVersion}"
+def generatedVersion = "${project.projectVersion}-${project.esVersion}"
 
 group 'pl.suchenia.esmonitor'
 version generatedVersion
