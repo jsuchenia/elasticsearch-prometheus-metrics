@@ -9,8 +9,8 @@ buildscript {
         classpath("org.elasticsearch.gradle:build-tools:${project.esVersion}")
     }
 }
-
-def generatedVersion = "${project.projectVersion}-${project.esVersion}"
+def projectVersion = project.projectVersion?.trim() ? project.projectVersion : "dev";
+def generatedVersion = "${projectVersion}-${project.esVersion}"
 
 group 'pl.suchenia.esmonitor'
 version generatedVersion
