@@ -16,6 +16,7 @@ import org.elasticsearch.plugins.ActionPlugin;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.rest.RestHandler;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
 
 import java.util.ArrayList;
@@ -30,14 +31,33 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
 
     private final JvmMetricsGenerator jvmMetricsGenerator = new JvmMetricsGenerator();
+    private final IndicesMetricsGenerator indicesMetricsGenerator = new IndicesMetricsGenerator();
+
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
     public PrometheusExporterPlugin() {
         logger.info("Initializing prometheus plugin");
 
-        handlers.put("/_prometheus/jvm", (writer, client) -> {
+        handlers.put("/_prometheus", (writer, client) -> {
+            logger.debug("Generating all stats in prometheus format");
+
             NodeStats nodeStats = getNodeStats(client);
             jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
+            indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
+        });
+
+        handlers.put("/_prometheus/jvm", (writer, client) -> {
+            logger.debug("Generating JVM stats in prometheus format");
+
+            NodeStats nodeStats = getNodeStats(client);
+            jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
+        });
+
+        handlers.put("/_prometheus/indices", (writer, client) -> {
+            logger.debug("Generating indices stats in prometheus format");
+
+            NodeStats nodeStats = getNodeStats(client);
+            indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
         });
     }
 

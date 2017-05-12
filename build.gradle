@@ -2,7 +2,6 @@
 buildscript {
     ext {
         esVersion = "5.3.2"
-        prometheusVersion = "0.0.21"
     }
 
     repositories {
@@ -15,10 +14,11 @@ buildscript {
     }
 }
 
-def projectVersion = "0.1-${esVersion}"
+def projectVersion = "dev"
+def generatedVersion = "${projectVersion}-${esVersion}"
 
 group 'pl.suchenia.esmonitor'
-version projectVersion
+version generatedVersion
 
 apply plugin: 'idea'
 apply plugin: 'elasticsearch.esplugin'
@@ -36,5 +36,5 @@ test.enabled = false
 esplugin {
     description 'Elasticsearch plugin to export status data in prometheus.io format'
     classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
-    version projectVersion
+    version generatedVersion
 }
