@@ -19,4 +19,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    repo: jsuchenia/elasticsearch-prometheus-metrics
+    repo: jsuchenia/prometheus-metrics

@@ -5,10 +5,7 @@ import org.elasticsearch.rest.BytesRestResponse;
 import org.elasticsearch.rest.RestChannel;
 import org.elasticsearch.rest.RestHandler;
 import org.elasticsearch.rest.RestRequest;
-import pl.suchenia.elasticsearchPrometheusMetrics.generators.PrometheusFormatWriter;
-
-import java.io.StringWriter;
-import java.io.Writer;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 import static org.elasticsearch.rest.RestStatus.OK;
 

@@ -4,6 +4,8 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.index.shard.IndexingStats;
 import org.elasticsearch.indices.NodeIndicesStats;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
 import java.util.Map;
 
@@ -14,37 +16,51 @@ public class IndicesMetricsGenerator {
         logger.debug("Generating output based on indicies stats: {}", indices);
 
         //StoreStats
-        writer.generateGaugeHelp("es_common_store_size", "Elasticsearch storage size (in bytes)");
-        writer.generateValue("es_common_store_size", indices.getStore().getSizeInBytes());
-        writer.generateGaugeHelp("es_common_store_size", "Elasticsearch storage throttle time (in millis)");
-        writer.generateValue("es_common_store_size", indices.getStore().getThrottleTime().millis());
+        writer.addGauge("es_common_store_size")
+                .withHelp("Elasticsearch storage size (in bytes)")
+                .add()
+                .value(indices.getStore().getSizeInBytes());
+        writer.addGauge("es_common_store_size")
+                .withHelp("Elasticsearch storage throttle time (in millis)")
+                .add()
+                .value(indices.getStore().getThrottleTime().millis());
 
 
         //DocsStats
-        writer.generateCounterHelp("es_common_docs_count", "Elasticsearch documents counter");
-        writer.generateValue("es_common_docs_count", indices.getDocs().getCount());
-        writer.generateCounterHelp("es_common_docs_deleted_count", "Elasticsearch documents deleted");
-        writer.generateValue("es_common_docs_deleted_count", indices.getDocs().getDeleted());
+        writer.addCounter("es_common_docs_count")
+                .withHelp("Elasticsearch documents counter")
+                .add()
+                .value(indices.getDocs().getCount());
+        writer.addCounter("es_common_docs_deleted_count")
+                .withHelp("Elasticsearch documents deleted")
+                .add()
+                .value(indices.getDocs().getDeleted());
 
         //Indexing stats per index
-        writer.generateCounterHelp("es_docindex_count", "Counter of indexing operations");
-        writer.generateCounterHelp("es_docindexfailed_count", "Counter of failed indexing operations");
-        writer.generateCounterHelp("es_docdelete_count", "Number of delete operations");
-        writer.generateGaugeHelp("es_docdelete_current", "Number of active delete operations");
-        writer.generateGaugeHelp("es_docindex_currnet", "Number of active index operations");
-        writer.generateGaugeHelp("es_docindex_isthrotled", "Flag to check is node throttled");
+        ValueWriter es_docindex_count = writer.addCounter("es_docindex_count")
+                .withHelp("Counter of indexing operations").add();
+        ValueWriter es_docindexfailed_count = writer.addCounter("es_docindexfailed_count")
+                .withHelp("Counter of failed indexing operations").add();
+        ValueWriter es_docdelete_count = writer.addCounter("es_docdelete_count")
+                .withHelp("Number of delete operations").add();
+        ValueWriter es_docdelete_current = writer.addGauge("es_docdelete_current")
+                .withHelp("Number of active delete operations").add();
+        ValueWriter es_docindex_current = writer.addGauge("es_docindex_current")
+                .withHelp("Number of active index operations").add();
+        ValueWriter es_docindex_isthrotled = writer.addGauge("es_docindex_isthrotled")
+                .withHelp("Flag to check is node throttled").add();
 
         if (indices.getIndexing().getTypeStats() != null) {
             for (Map.Entry<String, IndexingStats.Stats> entry : indices.getIndexing().getTypeStats().entrySet()) {
                 String index = entry.getKey();
                 IndexingStats.Stats stats = entry.getValue();
 
-                writer.generateValue("es_docindex_count", "index", index, stats.getIndexCount());
-                writer.generateValue("es_docindexfailed_count", "index", index, stats.getIndexFailedCount());
-                writer.generateValue("es_docdelete_count", "index", index, stats.getDeleteCount());
-                writer.generateValue("es_docdelete_current", "index", index, stats.getDeleteCurrent());
-                writer.generateValue("es_docindex_currnet", "index", index, stats.getIndexCurrent());
-                writer.generateValue("es_docindex_isthrotled", "index", index, stats.isThrottled() ? 1 : 0);
+                es_docindex_count.value("index", index, stats.getIndexCount());
+                es_docindexfailed_count.value("index", index, stats.getIndexFailedCount());
+                es_docdelete_count.value("index", index, stats.getDeleteCount());
+                es_docdelete_current.value("index", index, stats.getDeleteCurrent());
+                es_docindex_current.value("index", index, stats.getIndexCurrent());
+                es_docindex_isthrotled.value("index", index, stats.isThrottled() ? 1 : 0);
             }
         }
     }
