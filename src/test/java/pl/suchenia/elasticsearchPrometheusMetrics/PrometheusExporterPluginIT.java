@@ -21,23 +21,4 @@ public class PrometheusExporterPluginIT extends ESClientYamlSuiteTestCase {
     public static Iterable<Object[]> parameters() throws IOException {
         return ESClientYamlSuiteTestCase.createParameters();
     }
-
-    public void testPrometheusResponse() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus");
-
-        assertEquals(200, response.getStatusLine().getStatusCode());
-    }
-
-    public void testPrometheusJvmResponse() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/jvm");
-
-        assertEquals(200, response.getStatusLine().getStatusCode());
-    }
-
-    public void testPrometheusIndicesResponse() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/indices");
-
-        assertEquals(200, response.getStatusLine().getStatusCode());
-    }
-
 }
