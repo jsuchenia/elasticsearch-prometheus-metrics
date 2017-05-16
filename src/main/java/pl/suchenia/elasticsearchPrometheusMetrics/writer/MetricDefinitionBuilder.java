@@ -15,12 +15,12 @@ public final class MetricDefinitionBuilder {
         this.name = name;
     }
 
-    public MetricDefinitionBuilder withHelp(String help) {
+    public ValueWriter withHelp(String help) throws IOException {
         this.help = help;
-        return this;
+        return this.noHelp();
     }
 
-    public ValueWriter add() throws IOException {
+    public ValueWriter noHelp() throws IOException {
         writer.append("#HELP ");
         writer.append(name);
 

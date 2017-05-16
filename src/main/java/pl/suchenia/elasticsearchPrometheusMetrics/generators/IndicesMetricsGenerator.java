@@ -18,37 +18,33 @@ public class IndicesMetricsGenerator {
         //StoreStats
         writer.addGauge("es_common_store_size")
                 .withHelp("Elasticsearch storage size (in bytes)")
-                .add()
                 .value(indices.getStore().getSizeInBytes());
         writer.addGauge("es_common_store_size")
                 .withHelp("Elasticsearch storage throttle time (in millis)")
-                .add()
                 .value(indices.getStore().getThrottleTime().millis());
 
 
         //DocsStats
         writer.addCounter("es_common_docs_count")
                 .withHelp("Elasticsearch documents counter")
-                .add()
                 .value(indices.getDocs().getCount());
         writer.addCounter("es_common_docs_deleted_count")
                 .withHelp("Elasticsearch documents deleted")
-                .add()
                 .value(indices.getDocs().getDeleted());
 
         //Indexing stats per index
         ValueWriter es_docindex_count = writer.addCounter("es_docindex_count")
-                .withHelp("Counter of indexing operations").add();
+                .withHelp("Counter of indexing operations");
         ValueWriter es_docindexfailed_count = writer.addCounter("es_docindexfailed_count")
-                .withHelp("Counter of failed indexing operations").add();
+                .withHelp("Counter of failed indexing operations");
         ValueWriter es_docdelete_count = writer.addCounter("es_docdelete_count")
-                .withHelp("Number of delete operations").add();
+                .withHelp("Number of delete operations");
         ValueWriter es_docdelete_current = writer.addGauge("es_docdelete_current")
-                .withHelp("Number of active delete operations").add();
+                .withHelp("Number of active delete operations");
         ValueWriter es_docindex_current = writer.addGauge("es_docindex_current")
-                .withHelp("Number of active index operations").add();
+                .withHelp("Number of active index operations");
         ValueWriter es_docindex_isthrotled = writer.addGauge("es_docindex_isthrotled")
-                .withHelp("Flag to check is node throttled").add();
+                .withHelp("Flag to check is node throttled");
 
         if (indices.getIndexing().getTypeStats() != null) {
             for (Map.Entry<String, IndexingStats.Stats> entry : indices.getIndexing().getTypeStats().entrySet()) {

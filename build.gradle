@@ -10,7 +10,7 @@ buildscript {
     }
 }
 def projectVersion = project.projectVersion?.trim() ? project.projectVersion : "dev";
-def generatedVersion = "${projectVersion}-${project.esVersion}"
+def generatedVersion = "1.0" //"${projectVersion}.${project.esVersion}"
 
 group 'pl.suchenia.esmonitor'
 version generatedVersion
@@ -26,7 +26,6 @@ repositories {
 
 dependencyLicenses.enabled = false
 licenseHeaders.enabled = false
-test.enabled = false
 
 esplugin {
     description 'Elasticsearch plugin to export status data in prometheus.io format'
