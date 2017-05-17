@@ -48,10 +48,25 @@ public class MetricDefinitionBuilderTests extends ESTestCase {
 
         //when
         new MetricDefinitionBuilder(writer, "counter", "tag_name")
-                .noHelp().value("label", "value", 10);
+                .noHelp().value(10, "label", "value");
 
         //then
         assertEquals("#HELP tag_name\n#TYPE counter\ntag_name{label=\"value\",} 10.0\n",
+
+                writer.toString());
+    }
+    public void testCounterWithMultipleLabels() throws IOException {
+        //given
+        StringWriter writer = new StringWriter();
+
+        //when
+        new MetricDefinitionBuilder(writer, "counter", "tag_name")
+                .noHelp()
+                .withSharedLabel("sharedLabel", "sharedValue")
+                .value(10, "label", "value", "label2", "value2");
+
+        //then
+        assertEquals("#HELP tag_name\n#TYPE counter\ntag_name{sharedLabel=\"sharedValue\",label=\"value\",label2=\"value2\",} 10.0\n",
                 writer.toString());
     }
 }

@@ -1,6 +1,7 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.index.shard.IndexingStats;
 import org.elasticsearch.indices.NodeIndicesStats;
@@ -47,17 +48,22 @@ public class IndicesMetricsGenerator implements  MetricsGenerator<NodeIndicesSta
         ValueWriter es_docindex_isthrotled = writer.addGauge("es_docindex_isthrotled")
                 .withHelp("Flag to check is node throttled");
 
+        //Index data per each index
         if (indicesStats.getIndexing().getTypeStats() != null) {
+            logger.debug("Dumping data from indexes: {}", indicesStats.getIndexing().getTypeStats());
+
             for (Map.Entry<String, IndexingStats.Stats> entry : indicesStats.getIndexing().getTypeStats().entrySet()) {
+                logger.debug("Dumping data from index: {}", entry);
+
                 String index = entry.getKey();
                 IndexingStats.Stats stats = entry.getValue();
 
-                es_docindex_count.value("index", index, stats.getIndexCount());
-                es_docindexfailed_count.value("index", index, stats.getIndexFailedCount());
-                es_docdelete_count.value("index", index, stats.getDeleteCount());
-                es_docdelete_current.value("index", index, stats.getDeleteCurrent());
-                es_docindex_current.value("index", index, stats.getIndexCurrent());
-                es_docindex_isthrotled.value("index", index, stats.isThrottled() ? 1 : 0);
+                es_docindex_count.value(stats.getIndexCount(), "index", index);
+                es_docindexfailed_count.value(stats.getIndexFailedCount(), "index", index);
+                es_docdelete_count.value(stats.getDeleteCount(), "index", index);
+                es_docdelete_current.value(stats.getDeleteCurrent(), "index", index);
+                es_docindex_current.value(stats.getIndexCurrent(), "index", index);
+                es_docindex_isthrotled.value(stats.isThrottled() ? 1 : 0, "index", index);
             }
         }
     }

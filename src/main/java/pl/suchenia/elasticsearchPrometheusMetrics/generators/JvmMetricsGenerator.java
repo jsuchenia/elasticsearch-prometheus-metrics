@@ -11,28 +11,28 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
 
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, JvmStats jvmStats) {
-        logger.info("Generating output for JVM stats: {}", jvmStats);
+        logger.debug("Generating output for JVM stats: {}", jvmStats);
 
         //Aligned with prometheus client_java
-        logger.info("Now memory: {}", jvmStats.getMem());
+        logger.debug("Now memory: {}", jvmStats.getMem());
         writer.addGauge("jvm_memory_bytes_used")
                 .withHelp("Used bytes of a given JVM memory area.")
-                .value("area", "heap", jvmStats.getMem().getHeapUsed().getBytes())
-                .value("area", "nonheap", jvmStats.getMem().getNonHeapUsed().getBytes());
+                .value(jvmStats.getMem().getHeapUsed().getBytes(), "area", "heap")
+                .value(jvmStats.getMem().getNonHeapUsed().getBytes(), "area", "nonheap");
 
 
         writer.addGauge("jvm_memory_bytes_committed")
                 .withHelp("Committed (bytes) of a given JVM memory area")
-                .value("area", "heap", jvmStats.getMem().getHeapCommitted().getBytes())
-                .value("area", "nonheap", jvmStats.getMem().getNonHeapCommitted().getBytes());
+                .value(jvmStats.getMem().getHeapCommitted().getBytes(), "area", "heap")
+                .value(jvmStats.getMem().getNonHeapCommitted().getBytes(), "area", "nonheap");
 
         writer.addGauge("jvm_memory_bytes_max")
                 .withHelp("Max (bytes) of a given JVM memory area.")
-                .value("area", "heap", jvmStats.getMem().getHeapMax().getBytes());
+                .value(jvmStats.getMem().getHeapMax().getBytes(), "area", "heap");
 
 
-        logger.info("Now threads: {}", jvmStats.getThreads());
-
+        //JVM threads
+        logger.debug("Now threads: {}", jvmStats.getThreads());
         writer.addGauge("jvm_threads_current")
                 .withHelp("Current thread count of a JVM")
                 .value(jvmStats.getThreads().getCount());
@@ -41,8 +41,8 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
                 .withHelp("Peak thread count of a JVM")
                 .value(jvmStats.getThreads().getPeakCount());
 
-        logger.info("Now classes: {}", jvmStats.getClasses());
-
+        //JVM classes
+        logger.debug("Now classes: {}", jvmStats.getClasses());
         writer.addGauge("jvm_classes_loaded")
                 .withHelp("The number of classes that are currently loaded in the JVM")
                 .value(jvmStats.getClasses().getLoadedClassCount());
@@ -56,7 +56,7 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
                 .value(jvmStats.getClasses().getUnloadedClassCount());
 
         //ES custom fields
-        logger.info("Now custom: {}", jvmStats.getClasses());
+        logger.debug("Now custom: {}", jvmStats.getClasses());
 
         writer.addGauge("ec_jvm_timestamp")
                 .withHelp("Timestamp of last JVM status scrap")
