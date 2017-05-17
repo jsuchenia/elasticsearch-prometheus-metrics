@@ -5,15 +5,16 @@ import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.monitor.jvm.JvmStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
-import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
-public class JvmMetricsGenerator {
+public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
     private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
 
-    public void generateMetrics(PrometheusFormatWriter writer, JvmStats jvmStats) throws Exception {
-        logger.debug("Generating output for JVM stats: {}", jvmStats);
+    @Override
+    public void generateMetrics(PrometheusFormatWriter writer, JvmStats jvmStats) {
+        logger.info("Generating output for JVM stats: {}", jvmStats);
 
         //Aligned with prometheus client_java
+        logger.info("Now memory: {}", jvmStats.getMem());
         writer.addGauge("jvm_memory_bytes_used")
                 .withHelp("Used bytes of a given JVM memory area.")
                 .value("area", "heap", jvmStats.getMem().getHeapUsed().getBytes())
@@ -30,6 +31,8 @@ public class JvmMetricsGenerator {
                 .value("area", "heap", jvmStats.getMem().getHeapMax().getBytes());
 
 
+        logger.info("Now threads: {}", jvmStats.getThreads());
+
         writer.addGauge("jvm_threads_current")
                 .withHelp("Current thread count of a JVM")
                 .value(jvmStats.getThreads().getCount());
@@ -37,6 +40,8 @@ public class JvmMetricsGenerator {
         writer.addGauge("jvm_threads_peak")
                 .withHelp("Peak thread count of a JVM")
                 .value(jvmStats.getThreads().getPeakCount());
+
+        logger.info("Now classes: {}", jvmStats.getClasses());
 
         writer.addGauge("jvm_classes_loaded")
                 .withHelp("The number of classes that are currently loaded in the JVM")
@@ -50,15 +55,9 @@ public class JvmMetricsGenerator {
                 .withHelp("The total number of classes that have been unloaded since the JVM has started execution")
                 .value(jvmStats.getClasses().getUnloadedClassCount());
 
-        writer.addGauge("jvm_threads_current")
-                .withHelp("Current thread count of a JVM")
-                .value(jvmStats.getThreads().getCount());
-
-        writer.addGauge("jvm_threads_peak")
-                .withHelp("Peak thread count of a JVM")
-                .value(jvmStats.getThreads().getPeakCount());
-
         //ES custom fields
+        logger.info("Now custom: {}", jvmStats.getClasses());
+
         writer.addGauge("ec_jvm_timestamp")
                 .withHelp("Timestamp of last JVM status scrap")
                 .value(jvmStats.getTimestamp());

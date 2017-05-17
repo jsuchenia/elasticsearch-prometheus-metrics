@@ -1,6 +1,5 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.writer;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 public final class ValueWriter {
@@ -12,11 +11,11 @@ public final class ValueWriter {
         this.name = name;
     }
 
-    public void value(double value) throws IOException {
+    public void value(double value) {
         this.value(null, null, value);
     }
 
-    public ValueWriter value(String labelName, String labelValue, double value) throws IOException {
+    public ValueWriter value(String labelName, String labelValue, double value) {
         writer.append(name);
         if (labelName != null && labelValue != null) {
             writer.append("{");
@@ -33,7 +32,7 @@ public final class ValueWriter {
         return this;
     }
 
-    private void writeEscapedLabelValue(String labelValue) throws IOException {
+    private void writeEscapedLabelValue(String labelValue) {
         for (int i = 0; i < labelValue.length(); i++) {
             char c = labelValue.charAt(i);
             switch (c) {

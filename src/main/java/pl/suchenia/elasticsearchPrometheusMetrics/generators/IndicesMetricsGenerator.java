@@ -9,28 +9,29 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
 import java.util.Map;
 
-public class IndicesMetricsGenerator {
+public class IndicesMetricsGenerator implements  MetricsGenerator<NodeIndicesStats> {
     private static final Logger logger = Loggers.getLogger(IndicesMetricsGenerator.class);
 
-    public void generateMetrics(PrometheusFormatWriter writer, NodeIndicesStats indices) throws Exception {
-        logger.debug("Generating output based on indicies stats: {}", indices);
+    @Override
+    public void generateMetrics(PrometheusFormatWriter writer, NodeIndicesStats indicesStats) {
+        logger.debug("Generating output based on indicies stats: {}", indicesStats);
 
         //StoreStats
         writer.addGauge("es_common_store_size")
                 .withHelp("Elasticsearch storage size (in bytes)")
-                .value(indices.getStore().getSizeInBytes());
+                .value(indicesStats.getStore().getSizeInBytes());
         writer.addGauge("es_common_store_size")
                 .withHelp("Elasticsearch storage throttle time (in millis)")
-                .value(indices.getStore().getThrottleTime().millis());
+                .value(indicesStats.getStore().getThrottleTime().millis());
 
 
         //DocsStats
         writer.addCounter("es_common_docs_count")
                 .withHelp("Elasticsearch documents counter")
-                .value(indices.getDocs().getCount());
+                .value(indicesStats.getDocs().getCount());
         writer.addCounter("es_common_docs_deleted_count")
                 .withHelp("Elasticsearch documents deleted")
-                .value(indices.getDocs().getDeleted());
+                .value(indicesStats.getDocs().getDeleted());
 
         //Indexing stats per index
         ValueWriter es_docindex_count = writer.addCounter("es_docindex_count")
@@ -46,8 +47,8 @@ public class IndicesMetricsGenerator {
         ValueWriter es_docindex_isthrotled = writer.addGauge("es_docindex_isthrotled")
                 .withHelp("Flag to check is node throttled");
 
-        if (indices.getIndexing().getTypeStats() != null) {
-            for (Map.Entry<String, IndexingStats.Stats> entry : indices.getIndexing().getTypeStats().entrySet()) {
+        if (indicesStats.getIndexing().getTypeStats() != null) {
+            for (Map.Entry<String, IndexingStats.Stats> entry : indicesStats.getIndexing().getTypeStats().entrySet()) {
                 String index = entry.getKey();
                 IndexingStats.Stats stats = entry.getValue();
 

@@ -1,6 +1,5 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.writer;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 public final class MetricDefinitionBuilder {
@@ -15,12 +14,12 @@ public final class MetricDefinitionBuilder {
         this.name = name;
     }
 
-    public ValueWriter withHelp(String help) throws IOException {
+    public ValueWriter withHelp(String help) {
         this.help = help;
         return this.noHelp();
     }
 
-    public ValueWriter noHelp() throws IOException {
+    public ValueWriter noHelp() {
         writer.append("#HELP ");
         writer.append(name);
 
@@ -36,7 +35,7 @@ public final class MetricDefinitionBuilder {
         return new ValueWriter(writer, name);
     }
 
-    private void writeEscapedHelp(String help) throws IOException {
+    private void writeEscapedHelp(String help) {
         for (int i = 0; i < help.length(); i++) {
             char c = help.charAt(i);
             switch (c) {
