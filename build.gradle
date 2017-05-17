@@ -10,7 +10,7 @@ buildscript {
     }
 }
 def projectVersion = project.projectVersion?.trim() ? project.projectVersion : "dev";
-def generatedVersion = "${projectVersion}.${project.esVersion}"
+def generatedVersion = "${projectVersion}-${project.esVersion}"
 
 group 'pl.suchenia.esmonitor'
 version generatedVersion
