@@ -14,6 +14,20 @@ After installation it will expose few HTTP endpoints:
 
 To use it just add target URL to your prometheus: `http://elasticsearch.domain.com:9200/_prometheus`
 
+Simple rule to monitor cluster health:
+```
+ALERT EsClusterStatus
+  IF es_status > 0
+  FOR 1m
+  LABELS {
+    severity="critical"
+  }
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports non-healthy status of ElasticSearch cluster",
+    link="http://prometheus.host:9090/alerts",
+    summary="NonHealthy cluster on {{$labels.instance}}"
+  }
+```
 ## Supported versions
 * 5.4.0
 * 5.3.2
