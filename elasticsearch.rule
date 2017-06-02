@@ -1,0 +1,91 @@
+# Engine status
+ALERT AppDown
+  IF up == 0
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} has been not exposing metrics for 1 minute",
+    summary="Application down on {{$labels.job}}"
+  }
+
+# Cluster status
+ALERT EsStatusCritical
+  IF es_status > 1
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports critical status of ElasticSearch cluster",
+    summary="Critical cluster on {{$labels.instance}}"
+  }
+ALERT EsStatusWarning
+  IF es_status == 1
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports non-healthy status of ElasticSearch cluster",
+    summary="NonHealthy cluster on {{$labels.instance}}"
+  }
+
+ALERT EsUnassigedShards
+  IF es_unassigned_shards > 0
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="There are unassigned shards for more than 3 minutes on {{$labels.cluster}}",
+    summary="Unassigned shards on {{$labels.cluster}}"
+  }
+
+ALERT EsActiveShardsPercentage
+  IF es_shards_active_percentage < 100
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="Not all shards are active on {{$labels.cluster}} for more than 3 minutes",
+    summary="Non-active shards on {{$labels.cluster}}"
+  }
+
+# Index parameters
+ALERT TooManyIndexFailures
+  IF rate(es_docindexfailed_count[1m]) > 0.1
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="Too many failures while indexing documents on node {{$labels.instance}}",
+    summary="Indexing failures"
+  }
+
+ALERT IndexIsThrootled
+  IF es_docindex_isthrotled > 0
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="Index is throtled for more than 3minutes {{$labels.index}}",
+    summary="Index {{$labels.index}} throttled for more than 3 minutes"
+  }
+
+ALERT IndexUnassignedShards
+  IF es_index_unassigned_shards > 0
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="Unassigned shards on index {{$labels.index}} from {{$labels.cluster}} for more than 3 minutes",
+    summary="Unassigned shards on {{$labels.index}} at {{$labels.cluster}}"
+  }
+
+# JVM parameters
+ALERT JvmMemory
+  IF  jvm_memory_bytes_used /  jvm_memory_bytes_max > 0.95
+  FOR 1m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports high memory consumption for more than 1 minute",
+    summary="High JVM memory consumption on node {{$labels.instance}}"
+  }
+
+ALERT JvmMemoryPercent
+  IF ec_jvm_memory_heap_used_percen > 95
+  FOR 1m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports high memory consumtion for more than 1 minute",
+    summary="High JVM memory consumption on node {{$labels.instance}}"
+  }

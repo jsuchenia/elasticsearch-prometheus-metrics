@@ -45,7 +45,7 @@ public class IndicesMetricsGenerator implements  MetricsGenerator<NodeIndicesSta
                 .withHelp("Number of active delete operations");
         ValueWriter es_docindex_current = writer.addGauge("es_docindex_current")
                 .withHelp("Number of active index operations");
-        ValueWriter es_docindex_isthrotled = writer.addGauge("es_docindex_isthrotled")
+        ValueWriter es_docindex_isthrottled = writer.addGauge("es_docindex_isthrottled")
                 .withHelp("Flag to check is node throttled");
 
         //Index data per each index
@@ -63,7 +63,7 @@ public class IndicesMetricsGenerator implements  MetricsGenerator<NodeIndicesSta
                 es_docdelete_count.value(stats.getDeleteCount(), "index", index);
                 es_docdelete_current.value(stats.getDeleteCurrent(), "index", index);
                 es_docindex_current.value(stats.getIndexCurrent(), "index", index);
-                es_docindex_isthrotled.value(stats.isThrottled() ? 1 : 0, "index", index);
+                es_docindex_isthrottled.value(stats.isThrottled() ? 1 : 0, "index", index);
             }
         }
     }
