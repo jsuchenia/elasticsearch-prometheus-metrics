@@ -5,7 +5,7 @@
 ## Installation
 To install this plugin just add it into your version of ES. Example for *0.3.2* version for *ES 5.4.1*:
 ```
-bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.3.2/prometheus-metrics-0.3.2-5.4.1.zip"
+bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.3.2/prometheus-metrics-0.3.2-5.4.1.zip
 ```
 
 ## Features
@@ -14,8 +14,8 @@ Run of variety of Elasticsearch versions without any dependency - just pure asyn
 After installation it will expose few HTTP endpoints:
 * */_prometheus/jvm* - with details about JVM - most of metric aligned with [client_java](https://github.com/prometheus/client_java) code
 * */_prometheus/indices* - details about Indices stats
-* */_prometheus/cluster* - CLuster and indices status
-* */_prometheus* - Overall status
+* */_prometheus/cluster* - Cluster and indices status
+* */_prometheus* - Overall status - includes all metrics from above endpoints
 
 To use it just add target URL to your prometheus: `http://elasticsearch.domain.com:9200/_prometheus`
 
