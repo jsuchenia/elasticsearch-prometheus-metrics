@@ -1,6 +1,6 @@
 # prometheus-metrics plugin for ElasticSearch [![Build Status](https://travis-ci.org/jsuchenia/elasticsearch-prometheus-metrics.svg?branch=master)](https://travis-ci.org/jsuchenia/elasticsearch-prometheus-metrics)
 
-[Elasticsearch](https://www.elastic.co/products/elasticsearch) plugin to return internal status data in [Prometheus](https://prometheus.io) format for monitoring purposes. It can deliver basic information about cluster, indices and JVM status
+[Elasticsearch](https://www.elastic.co/products/elasticsearch) exporter plugin will return internal status data in [Prometheus](https://prometheus.io) format for monitoring purposes. It can deliver basic information about cluster, indices and JVM status. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Features
 
@@ -14,6 +14,7 @@ After installation it will expose few HTTP endpoints:
 
 To use it just add target URL to your prometheus: `http://elasticsearch.domain.com:9200/_prometheus`
 
+## Rules
 Simple rule to monitor cluster health:
 ```
 ALERT EsClusterStatus
@@ -28,7 +29,10 @@ ALERT EsClusterStatus
     summary="NonHealthy cluster on {{$labels.instance}}"
   }
 ```
+Few rules that we use are located in `elasticsearch.rule` file.
+
 ## Supported versions
+* 5.4.1
 * 5.4.0
 * 5.3.2
 * 5.3.1
