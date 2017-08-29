@@ -4,6 +4,7 @@ jdk:
 dist: trusty
 sudo: required
 script:
+- ./gradlew -P esVersion=5.5.2 -P projectVersion=$TRAVIS_TAG build
 - ./gradlew -P esVersion=5.5.1 -P projectVersion=$TRAVIS_TAG build
 - ./gradlew -P esVersion=5.5.0 -P projectVersion=$TRAVIS_TAG build
 - ./gradlew -P esVersion=5.4.1 -P projectVersion=$TRAVIS_TAG build
