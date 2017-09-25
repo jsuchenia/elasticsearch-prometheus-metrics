@@ -1,0 +1,4 @@
+Elasticsearch Prometheus Metrics
+Copyright 2017 Jacek Suchenia
+
+This product includes software developed by The Apache Software Foundation (http://www.apache.org/).

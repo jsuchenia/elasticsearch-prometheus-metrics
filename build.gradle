@@ -24,8 +24,11 @@ repositories {
     mavenCentral()
 }
 
-dependencyLicenses.enabled = false
 licenseHeaders.enabled = false
+
+project.licenseFile = file("LICENSE.txt")
+project.noticeFile = file("NOTICE.txt")
+ext.projectSubstitutions = [:]
 
 esplugin {
     description 'Elasticsearch plugin to export status data in prometheus.io format'
