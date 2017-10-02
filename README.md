@@ -3,9 +3,9 @@
 [Elasticsearch](https://www.elastic.co/products/elasticsearch) exporter plugin will return internal status data in [Prometheus](https://prometheus.io) format for monitoring purposes. It can deliver basic information about cluster, indices and JVM status. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Installation
-To install this plugin just add it into your version of ES. Example for *0.3.5* version for *ES 5.6.1*:
+To install this plugin just add it into your version of ES. Example for *0.4.0* version for *ES 5.6.1*:
 ```
-bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.3.5/prometheus-metrics-0.3.5-5.6.1.zip
+bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.4.0/prometheus-metrics-0.4.0-5.6.2.zip
 ```
 
 ## Features
@@ -13,6 +13,7 @@ Run of variety of Elasticsearch versions without any dependency - just pure asyn
 
 After installation it will expose few HTTP endpoints:
 * */_prometheus/jvm* - with details about JVM - most of metric aligned with [client_java](https://github.com/prometheus/client_java) code
+* */_prometheus/os* - with details about operting system
 * */_prometheus/indices* - details about Indices stats
 * */_prometheus/cluster* - Cluster and indices status
 * */_prometheus* - Overall status - includes all metrics from above endpoints
@@ -37,6 +38,7 @@ ALERT EsClusterStatus
 Few rules that we use are located in `elasticsearch.rule` file.
 
 ## Supported versions
+* 5.6.2
 * 5.6.1
 * 5.6.0
 * 5.5.2

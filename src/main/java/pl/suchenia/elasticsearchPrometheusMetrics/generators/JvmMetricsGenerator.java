@@ -3,8 +3,10 @@ package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.monitor.jvm.JvmStats;
+import org.elasticsearch.monitor.jvm.JvmStats.GarbageCollector;
 import pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
 public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
     private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
@@ -54,6 +56,13 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
         writer.addCounter("jvm_classes_unloaded_total")
                 .withHelp("The total number of classes that have been unloaded since the JVM has started execution")
                 .value(jvmStats.getClasses().getUnloadedClassCount());
+
+        ValueWriter gcValueWriter = writer.addSummary("jvm_gc_collection_seconds")
+                .withHelp("The total number of seconds spend on GC collection");
+
+        for (GarbageCollector collector : jvmStats.getGc().getCollectors()) {
+            gcValueWriter.summary(collector.getCollectionCount(), collector.getCollectionTime().getMillis(), "name", collector.getName());
+        }
 
         //ES custom fields
         logger.debug("Now custom: {}", jvmStats.getClasses());

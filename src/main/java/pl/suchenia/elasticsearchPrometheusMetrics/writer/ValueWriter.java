@@ -30,7 +30,12 @@ public final class ValueWriter {
     }
 
     public ValueWriter value(double value, Map<String, String> labels) {
-        writer.append(name);
+        writeValue(name, value, labels);
+        return this;
+    }
+
+    private void writeValue(String keyName, double value, Map<String, String> labels) {
+        writer.append(keyName);
         if (isNonEmpty(sharedLabels) || isNonEmpty(labels)) {
             writer.append("{");
             writeLabelsMap(sharedLabels);
@@ -41,8 +46,6 @@ public final class ValueWriter {
         }
         writer.append(Double.toString(value));
         writer.append("\n");
-
-        return this;
     }
 
     public ValueWriter value(double value, String...labels) {
@@ -90,5 +93,17 @@ public final class ValueWriter {
                 writer.append("\",");
             });
         }
+    }
+
+    public void summary(long collectionCount, long millis, String...labels) {
+        if (labels.length % 2 != 0) {
+            throw new IllegalArgumentException("Wrong number of labels, should be in pairs..");
+        }
+        Map<String, String> paramsMap = new LinkedHashMap<>();
+        for (int i = 0; i < labels.length; i++) {
+            paramsMap.put(labels[i], labels[++i]);
+        }
+        writeValue(name + "_count", collectionCount, paramsMap);
+        writeValue(name + "_sum", millis, paramsMap);
     }
 }

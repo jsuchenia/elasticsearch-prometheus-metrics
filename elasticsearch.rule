@@ -7,6 +7,24 @@ ALERT AppDown
     description="{{$labels.instance}} has been not exposing metrics for 1 minute",
     summary="Application down on {{$labels.job}}"
   }
+#CPU and memory
+ALERT EsCpuCritical
+  IF es_cpu_percentage > 95
+  FOR 3m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports critical cpu usage",
+    summary="Critical CPU usage on {{$labels.instance}}"
+  }
+
+ALERT EsMemoryCritical
+  IF es_memory_free_percentage < 10
+  FOR 3m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports critical free memory state",
+    summary="Critical Free memory usage on {{$labels.instance}}"
+  }
 
 # Cluster status
 ALERT EsStatusCritical

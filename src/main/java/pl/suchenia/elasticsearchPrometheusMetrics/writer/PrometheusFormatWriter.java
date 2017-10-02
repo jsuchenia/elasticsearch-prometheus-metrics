@@ -13,6 +13,10 @@ public class PrometheusFormatWriter {
         return new MetricDefinitionBuilder(writer, "counter", name);
     }
 
+    public MetricDefinitionBuilder addSummary(String name) {
+        return new MetricDefinitionBuilder(writer, "summary", name);
+    }
+
     public String toString() {
         return writer.toString();
     }
