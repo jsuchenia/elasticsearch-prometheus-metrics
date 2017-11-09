@@ -23,6 +23,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterMetricsGener
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.PluginInfoMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final IndicesMetricsGenerator indicesMetricsGenerator = new IndicesMetricsGenerator();
     private final ClusterMetricsGenerator clusterMetricsGenerator = new ClusterMetricsGenerator();
     private final OsMetricsGenerator osMetricsGenerator = new OsMetricsGenerator();
+    private final PluginInfoMetricsGenerator infoMetricsGenerator = new PluginInfoMetricsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -49,8 +51,10 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
         handlers.put("/_prometheus/jvm", (channel, client) -> {
             logger.debug("Generating JVM stats in prometheus format");
+
             return getNodeStats(client).thenApply((nodeStats -> {
                 PrometheusFormatWriter writer = new PrometheusFormatWriter();
+                infoMetricsGenerator.generateMetrics(writer, "");
                 jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
                 return writer;
             }));
@@ -58,8 +62,10 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
         handlers.put("/_prometheus/os", (channel, client) -> {
             logger.debug("Generating OS stats in prometheus format");
+
             return getNodeStats(client).thenApply((nodeStats -> {
                 PrometheusFormatWriter writer = new PrometheusFormatWriter();
+                infoMetricsGenerator.generateMetrics(writer, "");
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
                 return writer;
             }));
@@ -67,8 +73,10 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
         handlers.put("/_prometheus/indices", (channel, client) -> {
             logger.debug("Generating Indices stats in prometheus format");
+
             return getNodeStats(client).thenApply((nodeStats -> {
                 PrometheusFormatWriter writer = new PrometheusFormatWriter();
+                infoMetricsGenerator.generateMetrics(writer, "");
                 indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
                 return writer;
             }));
@@ -76,8 +84,10 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
         handlers.put("/_prometheus/cluster", (channel, client) -> {
             logger.debug("Generating Indices stats in prometheus format");
+
             return getClusterStats(client).thenApply((clusterResponse -> {
                 PrometheusFormatWriter writer = new PrometheusFormatWriter();
+                infoMetricsGenerator.generateMetrics(writer, "");
                 clusterMetricsGenerator.generateMetrics(writer, clusterResponse);
                 return writer;
             }));
@@ -85,17 +95,19 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
         handlers.put("/_prometheus", (channel, client) -> {
             logger.debug("Generating ALL stats in prometheus format");
-            PrometheusFormatWriter writer = new PrometheusFormatWriter();
+
             return getNodeStats(client).thenApply((nodeStats -> {
-                        jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
-                        indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
-                        osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
+                PrometheusFormatWriter writer = new PrometheusFormatWriter();
+                infoMetricsGenerator.generateMetrics(writer, "");
+                jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
+                indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
+                osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
+
                 return writer;
-                    }))
-                    .thenCombine(getClusterStats(client), (w, h) -> {
-                        clusterMetricsGenerator.generateMetrics(w, h);
-                        return w;
-                    });
+            })).thenCombine(getClusterStats(client), (writer, clusterStats) -> {
+                clusterMetricsGenerator.generateMetrics(writer, clusterStats);
+                return writer;
+            });
         });
     }
 

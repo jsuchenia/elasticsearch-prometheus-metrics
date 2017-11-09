@@ -24,6 +24,12 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'ElasticSearch Prometheus plugin', 'Implementation-Version': project.version
+    }
+}
+
 licenseHeaders.enabled = false
 
 if (project.addLicenses == "true") {

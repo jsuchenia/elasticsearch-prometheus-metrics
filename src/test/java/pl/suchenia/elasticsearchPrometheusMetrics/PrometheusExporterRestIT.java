@@ -15,7 +15,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(12 + 10 + 19 + 5, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(1+ 12 + 10 + 19 + 5, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfJvmContainsProperNumberOfEntries() throws IOException {
@@ -24,7 +24,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(12, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(13, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfIndicesContainsProperNumberOfEntries() throws IOException {
@@ -33,7 +33,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(10, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(11, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfClusterContainsProperNumberOfEntries() throws IOException {
@@ -42,7 +42,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(19, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(20, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfOsContainsProperNumberOfEntries() throws IOException {
@@ -51,7 +51,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(5, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(6, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     private Stream<String> getLines(Response response) throws IOException {
