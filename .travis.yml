@@ -5,6 +5,7 @@ dist: trusty
 sudo: required
 script:
 - ./gradlew wrapper --gradle-version 4.0.2 --distribution-type all
+- ./gradlew -P esVersion=6.0.0 -P projectVersion=$TRAVIS_TAG build
 - ./gradlew -P esVersion=5.6.4 -P projectVersion=$TRAVIS_TAG build
 - ./gradlew -P esVersion=5.6.3 -P projectVersion=$TRAVIS_TAG build
 - ./gradlew -P esVersion=5.6.2 -P projectVersion=$TRAVIS_TAG build

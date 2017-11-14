@@ -21,10 +21,6 @@ public class IndicesMetricsGenerator implements  MetricsGenerator<NodeIndicesSta
         writer.addGauge("es_common_store_size")
                 .withHelp("Elasticsearch storage size (in bytes)")
                 .value(indicesStats.getStore().getSizeInBytes());
-        writer.addGauge("es_throttle_time_millis")
-                .withHelp("Elasticsearch storage throttle time (in millis)")
-                .value(indicesStats.getStore().getThrottleTime().millis());
-
 
         //DocsStats
         writer.addCounter("es_common_docs_count")
