@@ -19,7 +19,6 @@ env:
   - ES_VERSION=5.4.1
   - ES_VERSION=5.4.0
 script:
-- ./gradlew wrapper --gradle-version $ES_VERSION --distribution-type all
 - ./gradlew -P esVersion=6.1.0 -P projectVersion=$TRAVIS_TAG build
 
 deploy:
