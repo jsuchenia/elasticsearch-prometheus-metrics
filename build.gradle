@@ -33,11 +33,9 @@ jar {
 
 licenseHeaders.enabled = false
 
-if (project.addLicenses == "true") {
-  project.licenseFile = file("LICENSE.txt")
-  project.noticeFile = file("NOTICE.txt")
-  ext.projectSubstitutions = [:]
-}
+project.licenseFile = file("LICENSE.txt")
+project.noticeFile = file("NOTICE.txt")
+ext.projectSubstitutions = [:]
 
 esplugin {
     description 'Elasticsearch plugin to export status data in prometheus.io format'
