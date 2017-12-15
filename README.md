@@ -3,9 +3,9 @@
 [Elasticsearch](https://www.elastic.co/products/elasticsearch) exporter plugin will return internal status data in [Prometheus](https://prometheus.io) format for monitoring purposes. It can deliver basic information about cluster, indices and JVM status. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Installation
-To install this plugin just add it into your version of ES. Example for *0.5.0* version for *ES 6.1.0*:
+To install this plugin just add it into your version of ES. Example for *0.5.2* version for *ES 6.1.0*:
 ```
-bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.5.1/prometheus-metrics-0.5.0-6.1.0.zip
+bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.5.2/prometheus-metrics-0.5.2-6.1.0.zip
 ```
 
 ## Features
