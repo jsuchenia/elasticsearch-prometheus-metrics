@@ -3,27 +3,24 @@ jdk:
 - oraclejdk8
 dist: trusty
 sudo: required
+env:
+  - ES_VERSION=6.1.0
+  - ES_VERSION=6.0.1
+  - ES_VERSION=6.0.0
+  - ES_VERSION=5.6.5
+  - ES_VERSION=5.6.4
+  - ES_VERSION=5.6.3
+  - ES_VERSION=5.6.2
+  - ES_VERSION=5.6.1
+  - ES_VERSION=5.6.0
+  - ES_VERSION=5.5.2
+  - ES_VERSION=5.5.1
+  - ES_VERSION=5.5.0
+  - ES_VERSION=5.4.1
+  - ES_VERSION=5.4.0
 script:
-- ./gradlew wrapper --gradle-version 4.0.2 --distribution-type all
+- ./gradlew wrapper --gradle-version $ES_VERSION --distribution-type all
 - ./gradlew -P esVersion=6.1.0 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=6.0.1 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=6.0.0 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=5.6.5 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=5.6.4 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=5.6.3 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=5.6.2 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=5.6.1 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=5.6.0 -P projectVersion=$TRAVIS_TAG build
-- ./gradlew -P esVersion=5.5.2 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew -P esVersion=5.5.1 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew -P esVersion=5.5.0 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew -P esVersion=5.4.1 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew -P esVersion=5.4.0 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew wrapper --gradle-version 2.13 --distribution-type all
-- ./gradlew -P esVersion=5.3.3 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew -P esVersion=5.3.2 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew -P esVersion=5.3.1 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
-- ./gradlew -P esVersion=5.3.0 -P projectVersion=$TRAVIS_TAG -P addLicenses=false build
 
 deploy:
   provider: releases
