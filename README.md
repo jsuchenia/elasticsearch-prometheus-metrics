@@ -16,6 +16,7 @@ After installation it will expose few HTTP endpoints:
 * */_prometheus/os* - with details about operting system
 * */_prometheus/indices* - details about Indices stats
 * */_prometheus/cluster* - Cluster and indices status
+* */_prometheus/cluster_settings* - Cluster wide settings to check global values as metrics
 * */_prometheus* - Overall status - includes all metrics from above endpoints
 
 To use it just add target URL to your prometheus: `http://elasticsearch.domain.com:9200/_prometheus`

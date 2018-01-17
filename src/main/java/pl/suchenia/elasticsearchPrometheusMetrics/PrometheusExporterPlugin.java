@@ -24,6 +24,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGener
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.PluginInfoMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterSettingsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final ClusterMetricsGenerator clusterMetricsGenerator = new ClusterMetricsGenerator();
     private final OsMetricsGenerator osMetricsGenerator = new OsMetricsGenerator();
     private final PluginInfoMetricsGenerator infoMetricsGenerator = new PluginInfoMetricsGenerator();
+    private final ClusterSettingsMetricsGenerator clusterSettingsMetricsGenerator = new ClusterSettingsMetricsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -93,6 +95,12 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
             }));
         });
 
+        handlers.put("/_prometheus/cluster_settings", (channel, client) -> {
+                PrometheusFormatWriter writer = new PrometheusFormatWriter();
+                clusterSettingsMetricsGenerator.generateMetrics(writer, client.settings());
+                return CompletableFuture.completedFuture(writer);
+        });
+
         handlers.put("/_prometheus", (channel, client) -> {
             logger.debug("Generating ALL stats in prometheus format");
 
@@ -105,7 +113,11 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
                 return writer;
             })).thenCombine(getClusterStats(client), (writer, clusterStats) -> {
+
                 clusterMetricsGenerator.generateMetrics(writer, clusterStats);
+                return writer;
+            }).thenApply((writer) -> {
+                clusterSettingsMetricsGenerator.generateMetrics(writer, client.settings());
                 return writer;
             });
         });
@@ -147,7 +159,6 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
     private static CompletableFuture<ClusterHealthResponse> getClusterStats(final Client client) {
         CompletableFuture<ClusterHealthResponse> result = new CompletableFuture<>();
-
         ClusterHealthRequest clusterHealthRequest = new ClusterHealthRequest();
         client.admin().cluster().health(clusterHealthRequest, new ActionListener<ClusterHealthResponse>() {
             @Override

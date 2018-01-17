@@ -15,7 +15,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(1+ 12 + 9 + 19 + 5, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(1+ 12 + 9 + 19 + 5 + 1, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfJvmContainsProperNumberOfEntries() throws IOException {
@@ -52,6 +52,15 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
 
         Stream<String> data = getLines(response);
         assertEquals(6, data.filter((line) -> line.startsWith("#HELP ")).count());
+    }
+
+    public void testIfSettingsContainsProperNumberOfEntries() throws IOException {
+        Response response = client().performRequest("GET", "/_prometheus/cluster_settings");
+
+        assertEquals(200, response.getStatusLine().getStatusCode());
+
+        Stream<String> data = getLines(response);
+        assertEquals(1, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     private Stream<String> getLines(Response response) throws IOException {
