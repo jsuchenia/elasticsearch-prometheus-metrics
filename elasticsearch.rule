@@ -107,3 +107,21 @@ ALERT JvmMemoryPercent
     description="{{$labels.instance}} reports high memory consumtion for more than 1 minute",
     summary="High JVM memory consumption on node {{$labels.instance}}"
   }
+
+#Cluster settings
+ALERT ClusterAllocationDisabled
+  IF cluster_settings{cluster_routing_allocation_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster allocation has been disabled",
+   summary="Cluster allocation disabled on node {{$labels.instance}}"
+  }
+ALERT ClusterRebalanceDisabled
+  IF cluster_settings{cluster_routing_rebalance_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster rebalance has been disabled",
+   summary="Cluster rebalance disabled on node {{$labels.instance}}"
+  }
