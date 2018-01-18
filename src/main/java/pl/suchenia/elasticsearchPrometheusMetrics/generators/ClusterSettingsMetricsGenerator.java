@@ -8,14 +8,18 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
 public class ClusterSettingsMetricsGenerator implements MetricsGenerator<Settings> {
     private static final Logger logger = Loggers.getLogger(ClusterSettingsMetricsGenerator.class);
-    private static final String CLUSTER_PREFIX = "cluster.";
+    private static final String CLUSTER_SETTINGS_PREFIX = "cluster.";
+    public static final String CLUSTER_NAME_KEY = "cluster.name";
 
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, Settings settings) {
-        ValueWriter settingsGauge = writer.addGauge("cluster_settings")
-                .withHelp("Cluster settings value visible from this node");
+        String clusterName = settings.get(CLUSTER_NAME_KEY, "(empty)");
 
-        settings.keySet().stream().filter((key) -> key.startsWith(CLUSTER_PREFIX)).forEach((key) -> {
+        ValueWriter settingsGauge = writer.addGauge("cluster_settings")
+                .withHelp("Cluster settings value visible from this node")
+                .withSharedLabel("cluster", clusterName);
+
+        settings.keySet().stream().filter((key) -> key.startsWith(CLUSTER_SETTINGS_PREFIX)).forEach((key) -> {
             settingsGauge.value(1, key, settings.get(key));
         });
     }

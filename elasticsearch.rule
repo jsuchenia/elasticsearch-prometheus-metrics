@@ -114,14 +114,14 @@ ALERT ClusterAllocationDisabled
   FOR 5m
   LABELS {severity="warning"}
   ANNOTATIONS {
-   description="{{$labels.instance}} reports that cluster allocation has been disabled",
-   summary="Cluster allocation disabled on node {{$labels.instance}}"
+   description="{{$labels.instance}} reports that cluster allocation has been disabled for {{$labels.cluster}}",
+   summary="Cluster allocation disabled on cluster {{$labels.cluster}}"
   }
 ALERT ClusterRebalanceDisabled
   IF cluster_settings{cluster_routing_rebalance_enable="none"} > 0
   FOR 5m
   LABELS {severity="warning"}
   ANNOTATIONS {
-   description="{{$labels.instance}} reports that cluster rebalance has been disabled",
-   summary="Cluster rebalance disabled on node {{$labels.instance}}"
+   description="{{$labels.instance}} reports that cluster rebalance has been disabled on {{$labels.cluster}}",
+   summary="Cluster rebalance disabled on cluster {{$labels.cluster}}"
   }
