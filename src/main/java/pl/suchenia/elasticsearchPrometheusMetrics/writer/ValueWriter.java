@@ -80,6 +80,21 @@ public final class ValueWriter {
         }
     }
 
+    private void writeEscapedLabelName(String labelName) {
+        for (int i = 0; i < labelName.length(); i++) {
+            char c = labelName.charAt(i);
+            switch (c) {
+                case '.':
+                case ':':
+                case '-':
+                    writer.append("_");
+                    break;
+                default:
+                    writer.append(c);
+            }
+        }
+    }
+
     private static boolean isNonEmpty(Map<String, String> labels) {
         return labels != null && labels.size() > 0;
     }
@@ -87,7 +102,7 @@ public final class ValueWriter {
     private void writeLabelsMap(Map<String, String> labels) {
         if (isNonEmpty(labels)) {
             labels.forEach((labelName, labelValue) -> {
-                writer.append(labelName);
+                writeEscapedLabelName(labelName);
                 writer.append("=\"");
                 writeEscapedLabelValue(labelValue);
                 writer.append("\",");
