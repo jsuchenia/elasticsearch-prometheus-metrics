@@ -145,7 +145,7 @@ ALERT ClusterRebalanceDisabledPersistently
 
 ALERT ClusterReadOnly
   IF cluster_settings{cluster_blocks_read_only!="false"} > 0
-  FOR 1min
+  FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
      description="{{$labels.instance}} reports that cluster {{$labels.cluster}} is in read-only mode",
@@ -153,7 +153,7 @@ ALERT ClusterReadOnly
     }
 ALERT ClusterReadOnlyPersistently
   IF cluster_persistent_settings{cluster_blocks_read_only!="false"} > 0
-  FOR 1min
+  FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
      description="{{$labels.instance}} reports that cluster {{$labels.cluster}} is in read-only mode",
