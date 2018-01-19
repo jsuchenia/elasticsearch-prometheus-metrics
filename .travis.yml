@@ -22,17 +22,9 @@ deploy:
   api_key:
     secure: X9SnIX47G9hhl8+oVg17vfZFkE2TG/FVG7PU1oy2NPejPy+JfFeTNPZbJE08CZtjO99+IjZCHDObxTCwe5Q1VxgYB+bZADwhlm7n9rHjb6vNL4TICSq9IRYCcl0FQ63WkAXdAjGqFqmz7vhKT+cC5p73xoxVrSPZiiwOh26HZp7O7sicJFUBTo9IzTqvOsAFCnsqNVhRuVzFR2J3Z3bLIP3llu1O+I5hbLdn4uyOy4YcetH/MTH/HxsObMv0Oa7UOc7S1mzO6aAam134B3FPAPh0F9r3yjSbmloEob//WsoD0Q1RXqvt0DxpTUruKWTKDOysO+CNhg9mTjBfSGvdcPfz4Y2FxNlGBp69GWn6gF6TKUa5G0exCs6gUiWYdF7TP0gXx1aSm3MqFEP8yDmK8QS3nROpOvq+1VkqIdewcVnvC2Dkl/Ot7QLFuPrxWdFgr3HSQnUZr7fVbPiPxsIMhw35/Bnhy/JZYfsVkJwBQX0FkIGvXSADrDJZC1kAJhlAAjUoxL1eR6s6VdX31geKizV3bN5VK+w/4xIVFtxFEMoU3iupkh2C7ZhS7d8Ym2VHhVQnWn4b/Zw/ZG08MoLJ31zLzJjbxLjOGN8cGYzlKVr7yIX7qC7xc5nNxTr2Jm6MUk6eQTZZ7AwcFxD+JrcpcVmLrR/r0Ikc5Xf90arPkEI=
   file_glob: true
-  file: build/distributions/*.zip
-  skip_cleanup: true
-  on:
-    tags: true
-    repo: jsuchenia/elasticsearch-prometheus-metrics
-
-  provider: releases
-  api_key:
-    secure: X9SnIX47G9hhl8+oVg17vfZFkE2TG/FVG7PU1oy2NPejPy+JfFeTNPZbJE08CZtjO99+IjZCHDObxTCwe5Q1VxgYB+bZADwhlm7n9rHjb6vNL4TICSq9IRYCcl0FQ63WkAXdAjGqFqmz7vhKT+cC5p73xoxVrSPZiiwOh26HZp7O7sicJFUBTo9IzTqvOsAFCnsqNVhRuVzFR2J3Z3bLIP3llu1O+I5hbLdn4uyOy4YcetH/MTH/HxsObMv0Oa7UOc7S1mzO6aAam134B3FPAPh0F9r3yjSbmloEob//WsoD0Q1RXqvt0DxpTUruKWTKDOysO+CNhg9mTjBfSGvdcPfz4Y2FxNlGBp69GWn6gF6TKUa5G0exCs6gUiWYdF7TP0gXx1aSm3MqFEP8yDmK8QS3nROpOvq+1VkqIdewcVnvC2Dkl/Ot7QLFuPrxWdFgr3HSQnUZr7fVbPiPxsIMhw35/Bnhy/JZYfsVkJwBQX0FkIGvXSADrDJZC1kAJhlAAjUoxL1eR6s6VdX31geKizV3bN5VK+w/4xIVFtxFEMoU3iupkh2C7ZhS7d8Ym2VHhVQnWn4b/Zw/ZG08MoLJ31zLzJjbxLjOGN8cGYzlKVr7yIX7qC7xc5nNxTr2Jm6MUk6eQTZZ7AwcFxD+JrcpcVmLrR/r0Ikc5Xf90arPkEI=
-  file_glob: false
-  file: elasticsearch.rule
+  file:
+  - build/distributions/*.zip
+  - elasticsearch.rule
   skip_cleanup: true
   on:
     tags: true
