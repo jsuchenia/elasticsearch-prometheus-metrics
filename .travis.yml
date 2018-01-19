@@ -24,7 +24,7 @@ deploy:
   file_glob: true
   file:
   - build/distributions/*.zip
-  - elasticsearch.rule
+  - elastic-rules.*
   skip_cleanup: true
   on:
     tags: true

@@ -1,12 +1,3 @@
-# Engine status
-ALERT AppDown
-  IF up == 0
-  FOR 1m
-  LABELS {severity="critical"}
-  ANNOTATIONS {
-    description="{{$labels.instance}} has been not exposing metrics for 1 minute",
-    summary="Application down on {{$labels.job}}"
-  }
 #CPU and memory
 ALERT EsCpuCritical
   IF es_cpu_percentage > 95
