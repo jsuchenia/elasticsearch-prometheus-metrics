@@ -8,7 +8,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 public class ClusterStateMetricsGenerator implements MetricsGenerator<ClusterState> {
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, ClusterState clusterState) {
-        String clusterName = clusterState.getClusterName().toString();
+        String clusterName = clusterState.getClusterName().value();
 
         ValueWriter persistentGauge = writer.addGauge("cluster_persistent_settings")
                 .withHelp("Cluster persistent settings value visible from this node")

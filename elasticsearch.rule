@@ -125,3 +125,37 @@ ALERT ClusterRebalanceDisabled
    description="{{$labels.instance}} reports that cluster rebalance has been disabled on {{$labels.cluster}}",
    summary="Cluster rebalance disabled on cluster {{$labels.cluster}}"
   }
+#Cluster settings
+ALERT ClusterAllocationDisabledPersistently
+  IF cluster_persistent_settings{cluster_routing_allocation_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster allocation has been disabled for {{$labels.cluster}}",
+   summary="Cluster allocation disabled on cluster {{$labels.cluster}}"
+  }
+ALERT ClusterRebalanceDisabledPersistently
+  IF cluster_persistent_settings{cluster_routing_rebalance_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster rebalance has been disabled on {{$labels.cluster}}",
+   summary="Cluster rebalance disabled on cluster {{$labels.cluster}}"
+  }
+
+ALERT ClusterReadOnly
+  IF cluster_settings{cluster_blocks_read_only!="false"} > 0
+  FOR 1min
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+     description="{{$labels.instance}} reports that cluster {{$labels.cluster}} is in read-only mode",
+     summary="Cluster {{$labels.cluster}} is read-only"
+    }
+ALERT ClusterReadOnlyPersistently
+  IF cluster_persistent_settings{cluster_blocks_read_only!="false"} > 0
+  FOR 1min
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+     description="{{$labels.instance}} reports that cluster {{$labels.cluster}} is in read-only mode",
+     summary="Cluster {{$labels.cluster}} is read-only"
+    }
