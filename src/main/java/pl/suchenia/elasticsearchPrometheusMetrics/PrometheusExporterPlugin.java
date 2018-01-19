@@ -7,7 +7,10 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.cluster.node.stats.NodeStats;
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
+import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.common.logging.Loggers;
@@ -19,12 +22,12 @@ import org.elasticsearch.plugins.ActionPlugin;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.rest.RestHandler;
-import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterHealthMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.PluginInfoMetricsGenerator;
-import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterSettingsMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterStateMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 import java.util.ArrayList;
@@ -41,10 +44,10 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
     private final JvmMetricsGenerator jvmMetricsGenerator = new JvmMetricsGenerator();
     private final IndicesMetricsGenerator indicesMetricsGenerator = new IndicesMetricsGenerator();
-    private final ClusterMetricsGenerator clusterMetricsGenerator = new ClusterMetricsGenerator();
+    private final ClusterHealthMetricsGenerator clusterHealthMetricsGenerator = new ClusterHealthMetricsGenerator();
     private final OsMetricsGenerator osMetricsGenerator = new OsMetricsGenerator();
     private final PluginInfoMetricsGenerator infoMetricsGenerator = new PluginInfoMetricsGenerator();
-    private final ClusterSettingsMetricsGenerator clusterSettingsMetricsGenerator = new ClusterSettingsMetricsGenerator();
+    private final ClusterStateMetricsGenerator clusterStateMetricsGenerator = new ClusterStateMetricsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -87,18 +90,20 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         handlers.put("/_prometheus/cluster", (channel, client) -> {
             logger.debug("Generating Indices stats in prometheus format");
 
-            return getClusterStats(client).thenApply((clusterResponse -> {
+            return getClusterHealth(client).thenApply((clusterResponse -> {
                 PrometheusFormatWriter writer = new PrometheusFormatWriter();
                 infoMetricsGenerator.generateMetrics(writer, "");
-                clusterMetricsGenerator.generateMetrics(writer, clusterResponse);
+                clusterHealthMetricsGenerator.generateMetrics(writer, clusterResponse);
                 return writer;
             }));
         });
 
         handlers.put("/_prometheus/cluster_settings", (channel, client) -> {
+            return getClusterState(client).thenApply((clusterState -> {
                 PrometheusFormatWriter writer = new PrometheusFormatWriter();
-                clusterSettingsMetricsGenerator.generateMetrics(writer, client.settings());
-                return CompletableFuture.completedFuture(writer);
+                clusterStateMetricsGenerator.generateMetrics(writer, clusterState);
+                return writer;
+            }));
         });
 
         handlers.put("/_prometheus", (channel, client) -> {
@@ -112,12 +117,11 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
 
                 return writer;
-            })).thenCombine(getClusterStats(client), (writer, clusterStats) -> {
-
-                clusterMetricsGenerator.generateMetrics(writer, clusterStats);
+            })).thenCombine(getClusterHealth(client), (writer, clusterHealth) -> {
+                clusterHealthMetricsGenerator.generateMetrics(writer, clusterHealth);
                 return writer;
-            }).thenApply((writer) -> {
-                clusterSettingsMetricsGenerator.generateMetrics(writer, client.settings());
+            }).thenCombine(getClusterState(client), (writer, clusterStats) -> {
+                clusterStateMetricsGenerator.generateMetrics(writer, clusterStats);
                 return writer;
             });
         });
@@ -157,13 +161,31 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         return result;
     }
 
-    private static CompletableFuture<ClusterHealthResponse> getClusterStats(final Client client) {
+    private static CompletableFuture<ClusterHealthResponse> getClusterHealth(final Client client) {
         CompletableFuture<ClusterHealthResponse> result = new CompletableFuture<>();
         ClusterHealthRequest clusterHealthRequest = new ClusterHealthRequest();
         client.admin().cluster().health(clusterHealthRequest, new ActionListener<ClusterHealthResponse>() {
             @Override
             public void onResponse(ClusterHealthResponse clusterHealthResponse) {
                 result.complete(clusterHealthResponse);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                result.completeExceptionally(e);
+            }
+        });
+        return result;
+    }
+
+    private static CompletableFuture<ClusterState> getClusterState(final Client client) {
+        CompletableFuture<ClusterState> result = new CompletableFuture<>();
+        ClusterStateRequest request = new ClusterStateRequest().routingTable(false).nodes(false);
+
+        client.admin().cluster().state(request, new ActionListener<ClusterStateResponse>() {
+            @Override
+            public void onResponse(ClusterStateResponse response) {
+                result.complete(response.getState());
             }
 
             @Override

@@ -7,7 +7,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
 import java.util.Map;
 
-public class ClusterMetricsGenerator implements MetricsGenerator<ClusterHealthResponse> {
+public class ClusterHealthMetricsGenerator implements MetricsGenerator<ClusterHealthResponse> {
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, ClusterHealthResponse clusterHealth) {
         String clusterName = clusterHealth.getClusterName();
