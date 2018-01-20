@@ -1,6 +1,6 @@
 # prometheus-metrics plugin for ElasticSearch [![Build Status](https://travis-ci.org/jsuchenia/elasticsearch-prometheus-metrics.svg?branch=master)](https://travis-ci.org/jsuchenia/elasticsearch-prometheus-metrics)
 
-[Elasticsearch](https://www.elastic.co/products/elasticsearch) exporter plugin will return internal status data in [Prometheus](https://prometheus.io) format for monitoring purposes. It can deliver basic information about cluster, indices and JVM status. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
+[Elasticsearch](https://www.elastic.co/products/elasticsearch) exporter plugin returns internal status data in a [Prometheus](https://prometheus.io) metrics format for monitoring and alerting purposes. It can deliver basic information about cluster, indices and JVM status in an asynchronous way. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Installation
 To install this plugin just add it into your version of ES. Example for *0.7.0* version for *ES 6.1.1*:
@@ -22,7 +22,7 @@ After installation it will expose few HTTP endpoints:
 To use it just add target URL to your prometheus: `http://elasticsearch.domain.com:9200/_prometheus`
 
 ## Rules
-Simple rule to monitor cluster health:
+Simple rule to monitor cluster health (v1 version):
 ```
 ALERT EsClusterStatus
   IF es_status > 0
@@ -61,4 +61,7 @@ Few rules that we use are located in rules file:
 * 5.3.1
 * 5.3.0
 
-Generated .zip plugins are available at Releases section of this project
+Generated .zip plugins are available at Releases section of this project (in a future in a maven repository)
+
+## Security
+Currently this plugin do not provide any REST access rules, consider to use other plugins like [Search Guard](https://github.com/floragunncom/search-guard)
