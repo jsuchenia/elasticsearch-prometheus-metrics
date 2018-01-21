@@ -10,17 +10,17 @@ public class ClusterStateMetricsGenerator implements MetricsGenerator<ClusterSta
     public void generateMetrics(PrometheusFormatWriter writer, ClusterState clusterState) {
         String clusterName = clusterState.getClusterName().value();
 
-        ValueWriter persistentGauge = writer.addGauge("cluster_persistent_settings")
+        ValueWriter persistentGauge = writer.addGauge("es_cluster_persistent_settings")
                 .withHelp("Cluster persistent settings value visible from this node")
                 .withSharedLabel("cluster", clusterName);
         fillSettings(persistentGauge, clusterState.getMetaData().persistentSettings());
 
-        ValueWriter transientGauge = writer.addGauge("cluster_transient_settings")
+        ValueWriter transientGauge = writer.addGauge("es_cluster_transient_settings")
                 .withHelp("Cluster persistent settings value visible from this node")
                 .withSharedLabel("cluster", clusterName);
         fillSettings(transientGauge, clusterState.getMetaData().transientSettings());
 
-        ValueWriter settingsGauge = writer.addGauge("cluster_settings")
+        ValueWriter settingsGauge = writer.addGauge("es_cluster_settings")
                 .withHelp("Cluster effective settings value visible from this node")
                 .withSharedLabel("cluster", clusterName);
         fillSettings(settingsGauge, clusterState.getMetaData().settings());

@@ -24,7 +24,7 @@ To use it just add target URL to your prometheus: `http://elasticsearch.domain.c
 ## Rules
 Simple rule to monitor cluster health (v1 version):
 ```
-ALERT EsClusterStatus
+ALERT ElasticSearchClusterStatus
   IF es_status > 0
   FOR 1m
   LABELS {
@@ -37,8 +37,19 @@ ALERT EsClusterStatus
   }
 ```
 Few rules that we use are located in rules file:
-* Prometheus 1.X version: `elastic-rules.v1.rule`
-* Prometheus 2.X version: `elastic-rules.v2.yml`
+* Prometheus 1.X version: [elastic-rules.rule](elastic-rules.rule)
+* Prometheus 2.X version: [elastic-rules.rule.yml](elastic-rules.rule.yml)
+
+### Hints for rules transformation:
+You can convert rules by executing a command:
+```
+docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prometheus update rules elastic-rules.rule
+```
+
+And validate them via command:
+```
+docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prometheus check rules elastic-rules.rule.yml
+```
 
 ## Supported versions
 * 6.1.1

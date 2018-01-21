@@ -1,0 +1,153 @@
+groups:
+- name: elastic-rules.rule
+  rules:
+  - alert: ElasticSearchCpuCritical
+    expr: es_cpu_percentage > 95
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      description: '{{$labels.instance}} reports critical cpu usage. Please verify
+        workload, or add another node to the cluster '
+      summary: Critical CPU usage on {{$labels.instance}}
+  - alert: ElasticSearchMemoryCritical
+    expr: es_memory_free_percentage < 10
+    for: 3m
+    labels:
+      severity: critical
+    annotations:
+      description: '{{$labels.instance}} reports critical free memory state. Please
+        validate memory usage, extend it or add another node to this cluster'
+      summary: Critical Free memory usage on {{$labels.instance}}
+  - alert: ElasticSearchStatusCritical
+    expr: es_status > 1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: '{{$labels.instance}} reports critical status of a ElasticSearch
+        cluster {{$labels.cluster}}. Please check additional metrics or logs.'
+      summary: Critical cluster status of {{$labels.cluster}} on {{$labels.instance}}
+  - alert: ElasticSearchStatusWarning
+    expr: es_status == 1
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      description: '{{$labels.instance}} reports non-healthy status of ElasticSearch
+        cluster {{$labels.cluster}}. Please check additional metrics or logs to find
+        a root cause'
+      summary: NonHealthy cluster status of {{$labels.cluster}} on {{$labels.instance}}
+  - alert: ElasticSearchUnassigedShards
+    expr: es_unassigned_shards > 0
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      description: There are unassigned shards for more than 3 minutes in {{$labels.cluster}}
+        on node {{$labels.instance}}. Please check cluster performance
+      summary: Unassigned shards on {{$labels.cluster}}
+  - alert: ElasticSearchActiveShardsPercentage
+    expr: es_shards_active_percentage < 100
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      description: Some shards ({{$value}}%) shards are inactive on {{$labels.cluster}}
+        for more than 3 minutes. Results from those shards are unavailable in returned
+        results.
+      summary: Non-active shards on {{$labels.cluster}}
+  - alert: ElasticSearchTooManyIndexFailures
+    expr: delta(es_docindexfailed_count[1m]) > 0
+    labels:
+      severity: warning
+    annotations:
+      description: There are documents indexing failures on node {{$labels.instance}}.
+        Please check logs to get more details.
+      summary: Indexing failures on {{$labels.instance}}
+  - alert: ElasticSearchIndexIsThrootled
+    expr: es_docindex_isthrotled > 0
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      description: Index {{$labels.index}} is throttled for more than 3minutes. Some
+        documents can be missing from returned results.
+      summary: Index {{$labels.index}} throttled for more than 3 minutes
+  - alert: ElasticSearchIndexUnassignedShards
+    expr: es_index_unassigned_shards > 0
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      description: Unassigned shards on index {{$labels.index}} from {{$labels.cluster}}
+        for more than 3 minutes
+      summary: Unassigned shards on {{$labels.index}} at {{$labels.cluster}}
+  - alert: ElasticSearchJvmMemoryPercent
+    expr: es_jvm_memory_heap_used_percen > 95
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      description: '{{$labels.instance}} reports high memory consumption for more
+        than 1 minute. Please check logs for more details'
+      summary: High JVM memory consumption on ES node {{$labels.instance}}
+  - alert: ElasticSearchClusterAllocationDisabled
+    expr: es_cluster_settings{cluster_routing_allocation_enable="none"} > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: '{{$labels.instance}} reports that cluster allocation has been
+        disabled for {{$labels.cluster}}. Some documents can be missing from reported
+        results.'
+      summary: Cluster allocation disabled on cluster {{$labels.cluster}}
+  - alert: ElasticSearchClusterRebalanceDisabled
+    expr: es_cluster_settings{cluster_routing_rebalance_enable="none"} > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: '{{$labels.instance}} reports that cluster rebalance has been disabled
+        on {{$labels.cluster}}. Some documents can be missing from reported results.'
+      summary: Cluster rebalance disabled on cluster {{$labels.cluster}}
+  - alert: ElasticSearchClusterAllocationDisabledPersistently
+    expr: es_cluster_persistent_settings{cluster_routing_allocation_enable="none"}
+      > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: '{{$labels.instance}} reports that cluster allocation has been
+        disabled persistently for {{$labels.cluster}}. Some documents can be missing
+        from reported results and restart will not help.'
+      summary: Cluster allocation disabled on cluster {{$labels.cluster}}
+  - alert: ElasticSearchClusterRebalanceDisabledPersistently
+    expr: es_cluster_persistent_settings{cluster_routing_rebalance_enable="none"}
+      > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      description: '{{$labels.instance}} reports that cluster rebalance has been disabled
+        on {{$labels.cluster}}. Some documents can be missing from reported results
+        and restart will not help.'
+      summary: Cluster rebalance disabled on cluster {{$labels.cluster}}
+  - alert: ElasticSearchClusterReadOnly
+    expr: es_cluster_settings{cluster_blocks_read_only!="false"} > 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: '{{$labels.instance}} reports that cluster {{$labels.cluster}}
+        is in read-only mode. New documents will be rejected.'
+      summary: Cluster {{$labels.cluster}} is in RO mode
+  - alert: ElasticSearchClusterReadOnlyPersistently
+    expr: es_cluster_persistent_settings{cluster_blocks_read_only!="false"} > 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      description: '{{$labels.instance}} reports that cluster {{$labels.cluster}}
+        is in read-only mode'
+      summary: Cluster {{$labels.cluster}} is read-only

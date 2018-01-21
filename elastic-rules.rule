@@ -1,0 +1,143 @@
+#CPU and memory
+ALERT ElasticSearchCpuCritical
+  IF es_cpu_percentage > 95
+  FOR 3m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports critical cpu usage. Please verify workload, or add another node to the cluster ",
+    summary="Critical CPU usage on {{$labels.instance}}"
+  }
+
+ALERT ElasticSearchMemoryCritical
+  IF es_memory_free_percentage < 10
+  FOR 3m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports critical free memory state. Please validate memory usage, extend it or add another node to this cluster",
+    summary="Critical Free memory usage on {{$labels.instance}}"
+  }
+
+# Cluster status
+ALERT ElasticSearchStatusCritical
+  IF es_status > 1
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports critical status of a ElasticSearch cluster {{$labels.cluster}}. Please check additional metrics or logs.",
+    summary="Critical cluster status of {{$labels.cluster}} on {{$labels.instance}}"
+  }
+ALERT ElasticSearchStatusWarning
+  IF es_status == 1
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports non-healthy status of ElasticSearch cluster {{$labels.cluster}}. Please check additional metrics or logs to find a root cause",
+    summary="NonHealthy cluster status of {{$labels.cluster}} on {{$labels.instance}}"
+  }
+
+ALERT ElasticSearchUnassigedShards
+  IF es_unassigned_shards > 0
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="There are unassigned shards for more than 3 minutes in {{$labels.cluster}} on node {{$labels.instance}}. Please check cluster performance",
+    summary="Unassigned shards on {{$labels.cluster}}"
+  }
+
+ALERT ElasticSearchActiveShardsPercentage
+  IF es_shards_active_percentage < 100
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="Some shards ({{$value}}%) shards are inactive on {{$labels.cluster}} for more than 3 minutes. Results from those shards are unavailable in returned results.",
+    summary="Non-active shards on {{$labels.cluster}}"
+  }
+
+# Index parameters
+ALERT ElasticSearchTooManyIndexFailures
+  IF delta(es_docindexfailed_count[1m]) > 0
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="There are documents indexing failures on node {{$labels.instance}}. Please check logs to get more details.",
+    summary="Indexing failures on {{$labels.instance}}"
+  }
+
+ALERT ElasticSearchIndexIsThrootled
+  IF es_docindex_isthrotled > 0
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="Index {{$labels.index}} is throttled for more than 3minutes. Some documents can be missing from returned results.",
+    summary="Index {{$labels.index}} throttled for more than 3 minutes"
+  }
+
+ALERT ElasticSearchIndexUnassignedShards
+  IF es_index_unassigned_shards > 0
+  FOR 3m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="Unassigned shards on index {{$labels.index}} from {{$labels.cluster}} for more than 3 minutes",
+    summary="Unassigned shards on {{$labels.index}} at {{$labels.cluster}}"
+  }
+
+ALERT ElasticSearchJvmMemoryPercent
+  IF es_jvm_memory_heap_used_percen > 95
+  FOR 1m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+    description="{{$labels.instance}} reports high memory consumption for more than 1 minute. Please check logs for more details",
+    summary="High JVM memory consumption on ES node {{$labels.instance}}"
+  }
+
+#Cluster settings
+ALERT ElasticSearchClusterAllocationDisabled
+  IF es_cluster_settings{cluster_routing_allocation_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster allocation has been disabled for {{$labels.cluster}}. Some documents can be missing from reported results.",
+   summary="Cluster allocation disabled on cluster {{$labels.cluster}}"
+  }
+ALERT ElasticSearchClusterRebalanceDisabled
+  IF es_cluster_settings{cluster_routing_rebalance_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster rebalance has been disabled on {{$labels.cluster}}. Some documents can be missing from reported results.",
+   summary="Cluster rebalance disabled on cluster {{$labels.cluster}}"
+  }
+
+#Cluster settings
+ALERT ElasticSearchClusterAllocationDisabledPersistently
+  IF es_cluster_persistent_settings{cluster_routing_allocation_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster allocation has been disabled persistently for {{$labels.cluster}}. Some documents can be missing from reported results and restart will not help.",
+   summary="Cluster allocation disabled on cluster {{$labels.cluster}}"
+  }
+ALERT ElasticSearchClusterRebalanceDisabledPersistently
+  IF es_cluster_persistent_settings{cluster_routing_rebalance_enable="none"} > 0
+  FOR 5m
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+   description="{{$labels.instance}} reports that cluster rebalance has been disabled on {{$labels.cluster}}. Some documents can be missing from reported results and restart will not help.",
+   summary="Cluster rebalance disabled on cluster {{$labels.cluster}}"
+  }
+
+ALERT ElasticSearchClusterReadOnly
+  IF es_cluster_settings{cluster_blocks_read_only!="false"} > 0
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+     description="{{$labels.instance}} reports that cluster {{$labels.cluster}} is in read-only mode. New documents will be rejected.",
+     summary="Cluster {{$labels.cluster}} is in RO mode"
+    }
+ALERT ElasticSearchClusterReadOnlyPersistently
+  IF es_cluster_persistent_settings{cluster_blocks_read_only!="false"} > 0
+  FOR 1m
+  LABELS {severity="critical"}
+  ANNOTATIONS {
+     description="{{$labels.instance}} reports that cluster {{$labels.cluster}} is in read-only mode",
+     summary="Cluster {{$labels.cluster}} is read-only"
+    }

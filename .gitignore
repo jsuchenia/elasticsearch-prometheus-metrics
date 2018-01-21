@@ -2,9 +2,9 @@
 *.log
 .gradle/
 build/
+classes/
 .local-*
 *.bat
 *.iml
 *.ipr
 *.iws
-classes/

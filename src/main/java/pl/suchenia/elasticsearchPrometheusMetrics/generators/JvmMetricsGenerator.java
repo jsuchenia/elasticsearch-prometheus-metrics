@@ -67,15 +67,15 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
         //ES custom fields
         logger.debug("Now custom: {}", jvmStats.getClasses());
 
-        writer.addGauge("ec_jvm_timestamp")
+        writer.addGauge("es_jvm_timestamp")
                 .withHelp("Timestamp of last JVM status scrap")
                 .value(jvmStats.getTimestamp());
 
-        writer.addGauge("ec_jvm_uptime")
+        writer.addGauge("es_jvm_uptime")
                 .withHelp("Node uptime in millis")
                 .value(jvmStats.getUptime().millis());
 
-        writer.addGauge("ec_jvm_memory_heap_used_percent")
+        writer.addGauge("es_jvm_memory_heap_used_percent")
                 .withHelp("Heap memory of JVM (in percentage)")
                 .value(jvmStats.getMem().getHeapUsedPercent());
 
