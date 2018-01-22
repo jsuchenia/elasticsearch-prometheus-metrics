@@ -1,7 +1,6 @@
 .idea/
 *.log
 .gradle/
-gradle/wrapper/gradle-wrapper.jar
 build/
 classes/
 .local-*

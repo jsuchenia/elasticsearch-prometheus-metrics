@@ -52,6 +52,7 @@ docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prome
 ```
 
 ## Supported versions
+* 6.1.2
 * 6.1.1
 * 6.1.0
 * 6.0.1
@@ -61,8 +62,6 @@ docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prome
 * 5.6.2
 * 5.6.1
 * 5.6.0
-
-### Supported in an older releases (up to [0.5.1](https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/tag/0.5.1))
 * 5.5.2
 * 5.5.1
 * 5.5.0
