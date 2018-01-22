@@ -16,7 +16,7 @@ env:
   - ES_VERSION=5.6.1
   - ES_VERSION=5.6.0
 script:
-- ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+- ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
 
 deploy:
   provider: releases

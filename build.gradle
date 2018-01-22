@@ -44,5 +44,16 @@ esplugin {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.3.1'
+    gradleVersion = getGradleVersionForEs(project.esVersion)
+}
+
+
+def getGradleVersionForEs(def esVersion) {
+   def vn = VersionNumber.parse(esVersion)
+
+   if (vn < VersionNumber.parse('6.1.0')) {
+      return '4.0.2'
+   }
+
+   return '4.4.1'
 }
