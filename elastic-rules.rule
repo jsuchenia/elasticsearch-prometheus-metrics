@@ -9,7 +9,7 @@ ALERT ElasticSearchCpuCritical
   }
 
 ALERT ElasticSearchMemoryCritical
-  IF es_memory_free_percentage < 10
+  IF es_memory_free_percentage < 9
   FOR 3m
   LABELS {severity="critical"}
   ANNOTATIONS {
@@ -126,7 +126,7 @@ ALERT ElasticSearchClusterRebalanceDisabledPersistently
   }
 
 ALERT ElasticSearchClusterReadOnly
-  IF es_cluster_settings{cluster_blocks_read_only!="false"} > 0
+  IF es_cluster_settings{cluster_blocks_read_only="true"} > 0
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {
@@ -134,7 +134,7 @@ ALERT ElasticSearchClusterReadOnly
      summary="Cluster {{$labels.cluster}} is in RO mode"
     }
 ALERT ElasticSearchClusterReadOnlyPersistently
-  IF es_cluster_persistent_settings{cluster_blocks_read_only!="false"} > 0
+  IF es_cluster_persistent_settings{cluster_blocks_read_only="true"} > 0
   FOR 1m
   LABELS {severity="critical"}
   ANNOTATIONS {

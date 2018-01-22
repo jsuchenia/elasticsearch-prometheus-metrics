@@ -11,7 +11,7 @@ groups:
         workload, or add another node to the cluster '
       summary: Critical CPU usage on {{$labels.instance}}
   - alert: ElasticSearchMemoryCritical
-    expr: es_memory_free_percentage < 10
+    expr: es_memory_free_percentage < 9
     for: 3m
     labels:
       severity: critical
@@ -134,7 +134,7 @@ groups:
         and restart will not help.'
       summary: Cluster rebalance disabled on cluster {{$labels.cluster}}
   - alert: ElasticSearchClusterReadOnly
-    expr: es_cluster_settings{cluster_blocks_read_only!="false"} > 0
+    expr: es_cluster_settings{cluster_blocks_read_only="true"} > 0
     for: 1m
     labels:
       severity: critical
@@ -143,7 +143,7 @@ groups:
         is in read-only mode. New documents will be rejected.'
       summary: Cluster {{$labels.cluster}} is in RO mode
   - alert: ElasticSearchClusterReadOnlyPersistently
-    expr: es_cluster_persistent_settings{cluster_blocks_read_only!="false"} > 0
+    expr: es_cluster_persistent_settings{cluster_blocks_read_only="true"} > 0
     for: 1m
     labels:
       severity: critical
