@@ -1,4 +1,3 @@
-
 buildscript {
     repositories {
         mavenCentral()
@@ -9,51 +8,59 @@ buildscript {
         classpath("org.elasticsearch.gradle:build-tools:${project.esVersion}")
     }
 }
+
 def projectVersion = project.projectVersion?.trim() ? project.projectVersion : "dev";
 def generatedVersion = "${projectVersion}-${project.esVersion}"
 
 group 'pl.suchenia.esmonitor'
 version generatedVersion
 
-apply plugin: 'idea'
-apply plugin: 'elasticsearch.esplugin'
+if (!gradleShouldBeDifferent()) {
+  apply plugin: 'idea'
+  apply plugin: 'elasticsearch.esplugin'
 
-sourceCompatibility = 1.8
+  jar {
+      manifest {
+          attributes 'Implementation-Title': 'ElasticSearch Prometheus plugin', 'Implementation-Version': project.version
+      }
+  }
+
+  esplugin {
+      description 'Elasticsearch plugin to export status data in prometheus.io format'
+      classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
+      version generatedVersion
+  }
+
+  sourceCompatibility = 1.8
+
+  licenseHeaders.enabled = false
+
+  project.licenseFile = file("LICENSE.txt")
+  project.noticeFile = file("NOTICE.txt")
+  ext.projectSubstitutions = [:]
+}
 
 repositories {
     mavenCentral()
     jcenter()
 }
 
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'ElasticSearch Prometheus plugin', 'Implementation-Version': project.version
-    }
-}
-
-licenseHeaders.enabled = false
-
-project.licenseFile = file("LICENSE.txt")
-project.noticeFile = file("NOTICE.txt")
-ext.projectSubstitutions = [:]
-
-esplugin {
-    description 'Elasticsearch plugin to export status data in prometheus.io format'
-    classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
-    version generatedVersion
-}
 
 task wrapper(type: Wrapper) {
-    gradleVersion = getGradleVersionForEs(project.esVersion)
+    gradleVersion = getGradleVersionForEs()
 }
 
 
-def getGradleVersionForEs(def esVersion) {
-   def vn = VersionNumber.parse(esVersion)
+def getGradleVersionForEs() {
+   def vn = VersionNumber.parse(project.esVersion)
 
    if (vn < VersionNumber.parse('6.1.0')) {
       return '4.0.2'
    }
 
    return '4.4.1'
+}
+
+def gradleShouldBeDifferent() {
+    return VersionNumber.parse(getGradleVersionForEs()) != VersionNumber.parse(gradle.gradleVersion)
 }
