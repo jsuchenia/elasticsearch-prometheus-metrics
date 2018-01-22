@@ -10,15 +10,6 @@ groups:
       description: '{{$labels.instance}} reports critical cpu usage. Please verify
         workload, or add another node to the cluster '
       summary: Critical CPU usage on {{$labels.instance}}
-  - alert: ElasticSearchMemoryCritical
-    expr: es_memory_free_percentage < 9
-    for: 3m
-    labels:
-      severity: critical
-    annotations:
-      description: '{{$labels.instance}} reports critical free memory state. Please
-        validate memory usage, extend it or add another node to this cluster'
-      summary: Critical Free memory usage on {{$labels.instance}}
   - alert: ElasticSearchStatusCritical
     expr: es_status > 1
     for: 1m

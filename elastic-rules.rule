@@ -7,16 +7,6 @@ ALERT ElasticSearchCpuCritical
     description="{{$labels.instance}} reports critical cpu usage. Please verify workload, or add another node to the cluster ",
     summary="Critical CPU usage on {{$labels.instance}}"
   }
-
-ALERT ElasticSearchMemoryCritical
-  IF es_memory_free_percentage < 9
-  FOR 3m
-  LABELS {severity="critical"}
-  ANNOTATIONS {
-    description="{{$labels.instance}} reports critical free memory state. Please validate memory usage, extend it or add another node to this cluster",
-    summary="Critical Free memory usage on {{$labels.instance}}"
-  }
-
 # Cluster status
 ALERT ElasticSearchStatusCritical
   IF es_status > 1
