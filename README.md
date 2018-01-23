@@ -40,6 +40,10 @@ Few rules that we use are located in rules file:
 * Prometheus 1.X version: [elastic-rules.rule](elastic-rules.rule)
 * Prometheus 2.X version: [elastic-rules.rule.yml](elastic-rules.rule.yml)
 
+### Rules assumptions
+* Cluster can be usntable for 10 minutes - after that we will send *severity=warning* alert
+* Cluster can be unavailable for at most 1m - after that we will send *severity=critical* alert
+
 ### Hints for rules transformation:
 You can convert rules by executing a command:
 ```

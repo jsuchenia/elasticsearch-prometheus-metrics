@@ -18,7 +18,7 @@ ALERT ElasticSearchStatusCritical
   }
 ALERT ElasticSearchStatusWarning
   IF es_status == 1
-  FOR 3m
+  FOR 30m
   LABELS {severity="warning"}
   ANNOTATIONS {
     description="{{$labels.instance}} reports non-healthy status of ElasticSearch cluster {{$labels.cluster}}. Please check additional metrics or logs to find a root cause",
@@ -27,7 +27,7 @@ ALERT ElasticSearchStatusWarning
 
 ALERT ElasticSearchUnassigedShards
   IF es_unassigned_shards > 0
-  FOR 3m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
     description="There are unassigned shards for more than 3 minutes in {{$labels.cluster}} on node {{$labels.instance}}. Please check cluster performance",
@@ -36,7 +36,7 @@ ALERT ElasticSearchUnassigedShards
 
 ALERT ElasticSearchActiveShardsPercentage
   IF es_shards_active_percentage < 100
-  FOR 3m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
     description="Some shards ({{$value}}%) shards are inactive on {{$labels.cluster}} for more than 3 minutes. Results from those shards are unavailable in returned results.",
@@ -54,7 +54,7 @@ ALERT ElasticSearchTooManyIndexFailures
 
 ALERT ElasticSearchIndexIsThrootled
   IF es_docindex_isthrotled > 0
-  FOR 3m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
     description="Index {{$labels.index}} is throttled for more than 3minutes. Some documents can be missing from returned results.",
@@ -63,7 +63,7 @@ ALERT ElasticSearchIndexIsThrootled
 
 ALERT ElasticSearchIndexUnassignedShards
   IF es_index_unassigned_shards > 0
-  FOR 3m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
     description="Unassigned shards on index {{$labels.index}} from {{$labels.cluster}} for more than 3 minutes",
@@ -82,7 +82,7 @@ ALERT ElasticSearchJvmMemoryPercent
 #Cluster settings
 ALERT ElasticSearchClusterAllocationDisabled
   IF es_cluster_settings{cluster_routing_allocation_enable="none"} > 0
-  FOR 5m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
    description="{{$labels.instance}} reports that cluster allocation has been disabled for {{$labels.cluster}}. Some documents can be missing from reported results.",
@@ -90,7 +90,7 @@ ALERT ElasticSearchClusterAllocationDisabled
   }
 ALERT ElasticSearchClusterRebalanceDisabled
   IF es_cluster_settings{cluster_routing_rebalance_enable="none"} > 0
-  FOR 5m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
    description="{{$labels.instance}} reports that cluster rebalance has been disabled on {{$labels.cluster}}. Some documents can be missing from reported results.",
@@ -100,7 +100,7 @@ ALERT ElasticSearchClusterRebalanceDisabled
 #Cluster settings
 ALERT ElasticSearchClusterAllocationDisabledPersistently
   IF es_cluster_persistent_settings{cluster_routing_allocation_enable="none"} > 0
-  FOR 5m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
    description="{{$labels.instance}} reports that cluster allocation has been disabled persistently for {{$labels.cluster}}. Some documents can be missing from reported results and restart will not help.",
@@ -108,7 +108,7 @@ ALERT ElasticSearchClusterAllocationDisabledPersistently
   }
 ALERT ElasticSearchClusterRebalanceDisabledPersistently
   IF es_cluster_persistent_settings{cluster_routing_rebalance_enable="none"} > 0
-  FOR 5m
+  FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
    description="{{$labels.instance}} reports that cluster rebalance has been disabled on {{$labels.cluster}}. Some documents can be missing from reported results and restart will not help.",
@@ -130,4 +130,12 @@ ALERT ElasticSearchClusterReadOnlyPersistently
   ANNOTATIONS {
      description="{{$labels.instance}} reports that cluster {{$labels.cluster}} is in read-only mode",
      summary="Cluster {{$labels.cluster}} is read-only"
+    }
+ALERT ElasticDifferentVersion
+  IF count(sum(es_prometheus_version) by (pluginVersion, cluster)) by (cluster) > 1
+  FOR 5d
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+     description="Cluster {{$labels.cluster}} reports inconsistent versions of ES plugin",
+     summary="Cluster {{$labels.cluster}} is inconsistent"
     }

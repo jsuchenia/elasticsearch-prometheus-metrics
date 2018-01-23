@@ -60,7 +60,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(3, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(4, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     private Stream<String> getLines(Response response) throws IOException {

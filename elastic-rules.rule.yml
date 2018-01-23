@@ -21,7 +21,7 @@ groups:
       summary: Critical cluster status of {{$labels.cluster}} on {{$labels.instance}}
   - alert: ElasticSearchStatusWarning
     expr: es_status == 1
-    for: 3m
+    for: 30m
     labels:
       severity: warning
     annotations:
@@ -31,7 +31,7 @@ groups:
       summary: NonHealthy cluster status of {{$labels.cluster}} on {{$labels.instance}}
   - alert: ElasticSearchUnassigedShards
     expr: es_unassigned_shards > 0
-    for: 3m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -40,7 +40,7 @@ groups:
       summary: Unassigned shards on {{$labels.cluster}}
   - alert: ElasticSearchActiveShardsPercentage
     expr: es_shards_active_percentage < 100
-    for: 3m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -58,7 +58,7 @@ groups:
       summary: Indexing failures on {{$labels.instance}}
   - alert: ElasticSearchIndexIsThrootled
     expr: es_docindex_isthrotled > 0
-    for: 3m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -67,7 +67,7 @@ groups:
       summary: Index {{$labels.index}} throttled for more than 3 minutes
   - alert: ElasticSearchIndexUnassignedShards
     expr: es_index_unassigned_shards > 0
-    for: 3m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -85,7 +85,7 @@ groups:
       summary: High JVM memory consumption on ES node {{$labels.instance}}
   - alert: ElasticSearchClusterAllocationDisabled
     expr: es_cluster_settings{cluster_routing_allocation_enable="none"} > 0
-    for: 5m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -95,7 +95,7 @@ groups:
       summary: Cluster allocation disabled on cluster {{$labels.cluster}}
   - alert: ElasticSearchClusterRebalanceDisabled
     expr: es_cluster_settings{cluster_routing_rebalance_enable="none"} > 0
-    for: 5m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -105,7 +105,7 @@ groups:
   - alert: ElasticSearchClusterAllocationDisabledPersistently
     expr: es_cluster_persistent_settings{cluster_routing_allocation_enable="none"}
       > 0
-    for: 5m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -116,7 +116,7 @@ groups:
   - alert: ElasticSearchClusterRebalanceDisabledPersistently
     expr: es_cluster_persistent_settings{cluster_routing_rebalance_enable="none"}
       > 0
-    for: 5m
+    for: 10m
     labels:
       severity: warning
     annotations:
@@ -142,3 +142,13 @@ groups:
       description: '{{$labels.instance}} reports that cluster {{$labels.cluster}}
         is in read-only mode'
       summary: Cluster {{$labels.cluster}} is read-only
+  - alert: ElasticDifferentVersion
+    expr: count(sum(es_prometheus_version) BY (pluginVersion, cluster)) BY (cluster)
+      > 1
+    for: 5d
+    labels:
+      severity: warning
+    annotations:
+      description: Cluster {{$labels.cluster}} reports inconsistent versions of ES
+        plugin
+      summary: Cluster {{$labels.cluster}} is inconsistent
