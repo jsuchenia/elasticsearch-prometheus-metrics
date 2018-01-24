@@ -1,17 +1,20 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.writer;
 
 import java.io.StringWriter;
+import java.util.Map;
 
 public final class MetricDefinitionBuilder {
     private final String type;
     private final StringWriter writer;
     private final String name;
+    private final Map<String, String> globalLabels;
     private String help;
 
-    MetricDefinitionBuilder(StringWriter writer, String type, String name) {
+    MetricDefinitionBuilder(StringWriter writer, String type, String name, Map<String, String> globalLabels) {
         this.writer = writer;
         this.type = type;
         this.name = name;
+        this.globalLabels = globalLabels;
     }
 
     public ValueWriter withHelp(String help) {
@@ -32,7 +35,7 @@ public final class MetricDefinitionBuilder {
         writer.append(type);
         writer.append("\n");
 
-        return new ValueWriter(writer, name);
+        return new ValueWriter(writer, name, globalLabels);
     }
 
     private void writeEscapedHelp(String help) {

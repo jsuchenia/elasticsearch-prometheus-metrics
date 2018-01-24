@@ -15,16 +15,16 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(1+ 12 + 9 + 19 + 5 + 3, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(1+ 12 + 9 + 19 + 5 + 3 + 5 + 8, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
-    public void testIfJvmContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/jvm");
+    public void testIfNodeContainsProperNumberOfEntries() throws IOException {
+        Response response = client().performRequest("GET", "/_prometheus/node");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(13, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(1 + 12 + 5 + 5 + 8, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfIndicesContainsProperNumberOfEntries() throws IOException {
@@ -43,15 +43,6 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
 
         Stream<String> data = getLines(response);
         assertEquals(20, data.filter((line) -> line.startsWith("#HELP ")).count());
-    }
-
-    public void testIfOsContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/os");
-
-        assertEquals(200, response.getStatusLine().getStatusCode());
-
-        Stream<String> data = getLines(response);
-        assertEquals(6, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfSettingsContainsProperNumberOfEntries() throws IOException {

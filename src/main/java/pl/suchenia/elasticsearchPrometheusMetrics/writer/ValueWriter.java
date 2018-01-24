@@ -11,16 +11,13 @@ public final class ValueWriter {
     private final String name;
     private Map<String, String> sharedLabels;
 
-    ValueWriter(StringWriter writer, String name) {
+    ValueWriter(StringWriter writer, String name, Map<String, String> globalLabels) {
         this.writer = writer;
         this.name = name;
+        this.sharedLabels = new HashMap<>(globalLabels);
     }
 
     public ValueWriter withSharedLabel(String labelName, String labelValue) {
-        if (sharedLabels == null) {
-            sharedLabels = new HashMap<>();
-        }
-
         sharedLabels.put(labelName, labelValue);
         return this;
     }

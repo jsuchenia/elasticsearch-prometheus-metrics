@@ -139,3 +139,12 @@ ALERT ElasticDifferentVersion
      description="Cluster {{$labels.cluster}} reports inconsistent versions of ES plugin",
      summary="Cluster {{$labels.cluster}} is inconsistent"
     }
+
+ALERT ElasticIngestionFailed
+  IF delta(es_ingest_total_failed_count[1m]) > 0
+  LABELS {severity="warning"}
+  ANNOTATIONS {
+     description="Node {{$labels.instance}} reports failed ingestions. Some documents were lost",
+     summary="Node {{$labels.instance}} ingestion failed"
+  }
+

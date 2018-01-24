@@ -1,16 +1,7 @@
 package pl.suchenia.elasticsearchPrometheusMetrics;
 
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
-import org.elasticsearch.action.admin.cluster.node.stats.NodeStats;
-import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsRequest;
-import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsResponse;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.client.node.NodeClient;
 import org.elasticsearch.cluster.metadata.IndexNameExpressionResolver;
 import org.elasticsearch.cluster.node.DiscoveryNodes;
 import org.elasticsearch.common.logging.Loggers;
@@ -23,21 +14,25 @@ import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.rest.RestHandler;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterHealthMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterStateMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.IngestMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.PluginInfoMetricsGenerator;
-import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterStateMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.TransportMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import static org.elasticsearch.rest.RestRequest.Method.GET;
+import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getClusterHealth;
+import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getClusterState;
+import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getNodeStats;
 
 public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
@@ -48,30 +43,23 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final OsMetricsGenerator osMetricsGenerator = new OsMetricsGenerator();
     private final PluginInfoMetricsGenerator infoMetricsGenerator = new PluginInfoMetricsGenerator();
     private final ClusterStateMetricsGenerator clusterStateMetricsGenerator = new ClusterStateMetricsGenerator();
+    private final TransportMetricsGenerator transportMetricsGenerator = new TransportMetricsGenerator();
+    private final IngestMetricsGenerator ingestMetricsGenerator = new IngestMetricsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
     public PrometheusExporterPlugin() {
         logger.info("Initializing prometheus reporting plugin");
-
-        handlers.put("/_prometheus/jvm", (channel, client) -> {
+        handlers.put("/_prometheus/node", (channel, client) -> {
             logger.debug("Generating JVM stats in prometheus format");
 
             return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = new PrometheusFormatWriter();
-                infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
+                PrometheusFormatWriter writer = getWriter(client);
+                infoMetricsGenerator.generateMetrics(writer, "");
+                transportMetricsGenerator.generateMetrics(writer, nodeStats.getTransport());
                 jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
-                return writer;
-            }));
-        });
-
-        handlers.put("/_prometheus/os", (channel, client) -> {
-            logger.debug("Generating OS stats in prometheus format");
-
-            return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = new PrometheusFormatWriter();
-                infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
+                ingestMetricsGenerator.generateMetrics(writer, nodeStats.getIngestStats());
                 return writer;
             }));
         });
@@ -80,8 +68,8 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
             logger.debug("Generating Indices stats in prometheus format");
 
             return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = new PrometheusFormatWriter();
-                infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
+                PrometheusFormatWriter writer = getWriter(client);
+                infoMetricsGenerator.generateMetrics(writer, "");
                 indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
                 return writer;
             }));
@@ -91,31 +79,36 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
             logger.debug("Generating Indices stats in prometheus format");
 
             return getClusterHealth(client).thenApply((clusterResponse -> {
-                PrometheusFormatWriter writer = new PrometheusFormatWriter();
-                infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
+                PrometheusFormatWriter writer = getWriter(client);
+                infoMetricsGenerator.generateMetrics(writer, "");
                 clusterHealthMetricsGenerator.generateMetrics(writer, clusterResponse);
                 return writer;
             }));
         });
 
-        handlers.put("/_prometheus/cluster_settings", (channel, client) -> {
-            return getClusterState(client).thenApply((clusterState -> {
-                PrometheusFormatWriter writer = new PrometheusFormatWriter();
-                infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
-                clusterStateMetricsGenerator.generateMetrics(writer, clusterState);
-                return writer;
-            }));
-        });
+        handlers.put("/_prometheus/cluster_settings",
+                (channel, client) -> getClusterState(client)
+                        .thenApply((clusterState -> {
+                            PrometheusFormatWriter writer = getWriter(client);
+                            logger.error("Got settings: {}", client.settings());
+                            infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
+                            clusterStateMetricsGenerator.generateMetrics(writer, clusterState);
+                            return writer;
+                        }
+                        )
+                )
+        );
 
         handlers.put("/_prometheus", (channel, client) -> {
             logger.debug("Generating ALL stats in prometheus format");
             return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = new PrometheusFormatWriter();
+                PrometheusFormatWriter writer = getWriter(client);
                 infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
                 jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
                 indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
-
+                transportMetricsGenerator.generateMetrics(writer, nodeStats.getTransport());
+                ingestMetricsGenerator.generateMetrics(writer, nodeStats.getIngestStats());
                 return writer;
             })).thenCombine(getClusterHealth(client), (writer, clusterHealth) -> {
                 clusterHealthMetricsGenerator.generateMetrics(writer, clusterHealth);
@@ -142,57 +135,14 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         return new ArrayList<>(handlers.values());
     }
 
-    private static CompletableFuture<NodeStats> getNodeStats(final Client client) {
-        CompletableFuture<NodeStats> result = new CompletableFuture<>();
+    private PrometheusFormatWriter getWriter(NodeClient client) {
+        String nodeName = client.settings().get("node.name");
+        String clusterName = client.settings().get("cluster.name");
 
-        NodesStatsRequest nodesStatsRequest = new NodesStatsRequest("_local").all();
-        client.admin().cluster().nodesStats(nodesStatsRequest, new ActionListener<NodesStatsResponse>() {
-            @Override
-            public void onResponse(NodesStatsResponse nodesStatsResponse) {
-                NodeStats stats = nodesStatsResponse.getNodes().get(0);
-                result.complete(stats);
-            }
+        Map<String, String> globalLabels = new HashMap<>();
+        globalLabels.put("node", nodeName);
+        globalLabels.put("cluster", clusterName);
 
-            @Override
-            public void onFailure(Exception e) {
-                result.completeExceptionally(e);
-            }
-        });
-        return result;
-    }
-
-    private static CompletableFuture<ClusterHealthResponse> getClusterHealth(final Client client) {
-        CompletableFuture<ClusterHealthResponse> result = new CompletableFuture<>();
-        ClusterHealthRequest clusterHealthRequest = new ClusterHealthRequest();
-        client.admin().cluster().health(clusterHealthRequest, new ActionListener<ClusterHealthResponse>() {
-            @Override
-            public void onResponse(ClusterHealthResponse clusterHealthResponse) {
-                result.complete(clusterHealthResponse);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                result.completeExceptionally(e);
-            }
-        });
-        return result;
-    }
-
-    private static CompletableFuture<ClusterState> getClusterState(final Client client) {
-        CompletableFuture<ClusterState> result = new CompletableFuture<>();
-        ClusterStateRequest request = new ClusterStateRequest().routingTable(false).nodes(false);
-
-        client.admin().cluster().state(request, new ActionListener<ClusterStateResponse>() {
-            @Override
-            public void onResponse(ClusterStateResponse response) {
-                result.complete(response.getState());
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                result.completeExceptionally(e);
-            }
-        });
-        return result;
+        return new PrometheusFormatWriter(globalLabels);
     }
 }
