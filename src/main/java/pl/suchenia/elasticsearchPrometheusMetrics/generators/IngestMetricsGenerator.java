@@ -1,5 +1,7 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.ingest.IngestStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
@@ -7,8 +9,12 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 import java.util.Map;
 
 public class IngestMetricsGenerator implements MetricsGenerator<IngestStats> {
+    private static final Logger logger = Loggers.getLogger(IngestMetricsGenerator.class);
+
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, IngestStats ingestStats) {
+        logger.debug("Generating metrics about ingest stats: {}", ingestStats);
+
         writer.addCounter("es_ingest_total_count")
                 .withHelp("Total number of processed documents during ingestion phase")
                 .value(ingestStats.getTotalStats().getIngestCount());

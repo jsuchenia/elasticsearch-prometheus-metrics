@@ -1,11 +1,17 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.monitor.os.OsStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 public class OsMetricsGenerator implements MetricsGenerator<OsStats> {
+    private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
+
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, OsStats osStats) {
+        logger.debug("Generating output for OS stats: {}", osStats);
+
         writer.addGauge("es_cpu_percentage")
                 .withHelp("ElasticSearch CPU percentage")
                 .value(osStats.getCpu().getPercent());

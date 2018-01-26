@@ -9,13 +9,27 @@ import java.io.InputStreamReader;
 import java.util.stream.Stream;
 
 public class PrometheusExporterRestIT extends ESRestTestCase {
+    private static final int INFO_ENTRIES = 1;
+    private static final int CLUSTER_SETTINGS_ENTRIES = 3;
+    private static final int CLUSTER_HEALTH_ENTRIES = 19;
+    private static final int INDICES_ENTRIES = 9;
+    private static final int TRANSPORT_ENTRIES = 5;
+    private static final int JVM_ENTRIES = 12;
+    private static final int OS_ENTRIES = 5;
+    private static final int INGEST_ENTRIES = 8;
+    private static final int PROCESS_ENTRIES = 5;
+
+    private static final int NODE_ENTRIES = TRANSPORT_ENTRIES + JVM_ENTRIES + OS_ENTRIES + INGEST_ENTRIES + PROCESS_ENTRIES;
+    private static final int ALL_ENTRIES = NODE_ENTRIES + INDICES_ENTRIES + CLUSTER_HEALTH_ENTRIES + CLUSTER_SETTINGS_ENTRIES;
+
+
     public void testIfRestEndpointExistsWithProperNumberOfEntries() throws IOException {
         Response response = client().performRequest("GET", "/_prometheus");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(1+ 12 + 9 + 19 + 5 + 3 + 5 + 8, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(ALL_ENTRIES + INFO_ENTRIES, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfNodeContainsProperNumberOfEntries() throws IOException {
@@ -24,7 +38,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(1 + 12 + 5 + 5 + 8, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(NODE_ENTRIES + INFO_ENTRIES, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfIndicesContainsProperNumberOfEntries() throws IOException {
@@ -33,7 +47,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(10, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(INDICES_ENTRIES + INFO_ENTRIES, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfClusterContainsProperNumberOfEntries() throws IOException {
@@ -42,7 +56,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(20, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(CLUSTER_HEALTH_ENTRIES + INFO_ENTRIES, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     public void testIfSettingsContainsProperNumberOfEntries() throws IOException {
@@ -51,7 +65,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
         assertEquals(200, response.getStatusLine().getStatusCode());
 
         Stream<String> data = getLines(response);
-        assertEquals(4, data.filter((line) -> line.startsWith("#HELP ")).count());
+        assertEquals(CLUSTER_SETTINGS_ENTRIES + INFO_ENTRIES, data.filter((line) -> line.startsWith("#HELP ")).count());
     }
 
     private Stream<String> getLines(Response response) throws IOException {

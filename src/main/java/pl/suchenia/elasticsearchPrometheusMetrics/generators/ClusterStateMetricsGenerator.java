@@ -1,13 +1,18 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
 public class ClusterStateMetricsGenerator implements MetricsGenerator<ClusterState> {
+    private static final Logger logger = Loggers.getLogger(ClusterStateMetricsGenerator.class);
+
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, ClusterState clusterState) {
+        logger.debug("Generating data about cluster state: {}", clusterState);
 
         ValueWriter persistentGauge = writer.addGauge("es_cluster_persistent_settings")
                 .withHelp("Cluster persistent settings value visible from this node");

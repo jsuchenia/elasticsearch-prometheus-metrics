@@ -1,15 +1,20 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.cluster.health.ClusterIndexHealth;
+import org.elasticsearch.common.logging.Loggers;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
 import java.util.Map;
 
 public class ClusterHealthMetricsGenerator implements MetricsGenerator<ClusterHealthResponse> {
+    private static final Logger logger = Loggers.getLogger(ClusterHealthMetricsGenerator.class);
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, ClusterHealthResponse clusterHealth) {
+        logger.debug("Generating data about cluster health: {}", clusterHealth);
+
         //Shards global data
         writer.addGauge("es_active_shards")
                 .withHelp("Number of active shards")

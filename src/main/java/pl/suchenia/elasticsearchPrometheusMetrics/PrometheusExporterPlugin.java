@@ -20,6 +20,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.IngestMetricsGenera
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.PluginInfoMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.ProcessMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.TransportMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
@@ -45,6 +46,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final ClusterStateMetricsGenerator clusterStateMetricsGenerator = new ClusterStateMetricsGenerator();
     private final TransportMetricsGenerator transportMetricsGenerator = new TransportMetricsGenerator();
     private final IngestMetricsGenerator ingestMetricsGenerator = new IngestMetricsGenerator();
+    private final ProcessMetricsGenerator processMetricsGenerator = new ProcessMetricsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -54,12 +56,13 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
             logger.debug("Generating JVM stats in prometheus format");
 
             return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = getWriter(client);
+                PrometheusFormatWriter writer = createWriter(client);
                 infoMetricsGenerator.generateMetrics(writer, "");
                 transportMetricsGenerator.generateMetrics(writer, nodeStats.getTransport());
                 jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
                 ingestMetricsGenerator.generateMetrics(writer, nodeStats.getIngestStats());
+                processMetricsGenerator.generateMetrics(writer, nodeStats.getProcess());
                 return writer;
             }));
         });
@@ -68,7 +71,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
             logger.debug("Generating Indices stats in prometheus format");
 
             return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = getWriter(client);
+                PrometheusFormatWriter writer = createWriter(client);
                 infoMetricsGenerator.generateMetrics(writer, "");
                 indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
                 return writer;
@@ -79,7 +82,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
             logger.debug("Generating Indices stats in prometheus format");
 
             return getClusterHealth(client).thenApply((clusterResponse -> {
-                PrometheusFormatWriter writer = getWriter(client);
+                PrometheusFormatWriter writer = createWriter(client);
                 infoMetricsGenerator.generateMetrics(writer, "");
                 clusterHealthMetricsGenerator.generateMetrics(writer, clusterResponse);
                 return writer;
@@ -89,7 +92,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         handlers.put("/_prometheus/cluster_settings",
                 (channel, client) -> getClusterState(client)
                         .thenApply((clusterState -> {
-                            PrometheusFormatWriter writer = getWriter(client);
+                            PrometheusFormatWriter writer = createWriter(client);
                             logger.error("Got settings: {}", client.settings());
                             infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
                             clusterStateMetricsGenerator.generateMetrics(writer, clusterState);
@@ -102,13 +105,14 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         handlers.put("/_prometheus", (channel, client) -> {
             logger.debug("Generating ALL stats in prometheus format");
             return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = getWriter(client);
+                PrometheusFormatWriter writer = createWriter(client);
                 infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
                 jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
                 indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
                 transportMetricsGenerator.generateMetrics(writer, nodeStats.getTransport());
                 ingestMetricsGenerator.generateMetrics(writer, nodeStats.getIngestStats());
+                processMetricsGenerator.generateMetrics(writer, nodeStats.getProcess());
                 return writer;
             })).thenCombine(getClusterHealth(client), (writer, clusterHealth) -> {
                 clusterHealthMetricsGenerator.generateMetrics(writer, clusterHealth);
@@ -135,7 +139,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         return new ArrayList<>(handlers.values());
     }
 
-    private PrometheusFormatWriter getWriter(NodeClient client) {
+    private static PrometheusFormatWriter createWriter(NodeClient client) {
         String nodeName = client.settings().get("node.name");
         String clusterName = client.settings().get("cluster.name");
 

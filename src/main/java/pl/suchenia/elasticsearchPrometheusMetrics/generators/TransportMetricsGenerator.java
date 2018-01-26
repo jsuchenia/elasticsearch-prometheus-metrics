@@ -1,11 +1,17 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.transport.TransportStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 public class TransportMetricsGenerator implements MetricsGenerator<TransportStats>{
+    private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
+
     @Override
     public void generateMetrics(PrometheusFormatWriter writer, TransportStats transportStats) {
+        logger.debug("Generating output for transport stats: {}", transportStats);
+
         writer.addGauge("es_transport_server_connections")
                 .withHelp("Number of opened server connections")
                 .value(transportStats.getServerOpen());

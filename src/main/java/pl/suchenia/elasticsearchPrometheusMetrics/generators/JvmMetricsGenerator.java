@@ -8,6 +8,16 @@ import pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 
+/*
+ Aligned with process data returned by JVM client
+
+ https://github.com/prometheus/client_java/blob/master/simpleclient_hotspot/src/main/java/io/prometheus/client/hotspot/
+ including:
+   StandardExports.java
+   MemoryPoolsExports.java
+*/
+
+
 public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
     private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
 
@@ -15,7 +25,6 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
     public void generateMetrics(PrometheusFormatWriter writer, JvmStats jvmStats) {
         logger.debug("Generating output for JVM stats: {}", jvmStats);
 
-        //Aligned with prometheus client_java
         logger.debug("Now memory: {}", jvmStats.getMem());
         writer.addGauge("jvm_memory_bytes_used")
                 .withHelp("Used bytes of a given JVM memory area.")
@@ -63,7 +72,7 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
         for (GarbageCollector collector : jvmStats.getGc().getCollectors()) {
             gcValueWriter.summary(collector.getCollectionCount(), collector.getCollectionTime().getMillis(), "name", collector.getName());
         }
-
+        
         //ES custom fields
         logger.debug("Now custom: {}", jvmStats.getClasses());
 
