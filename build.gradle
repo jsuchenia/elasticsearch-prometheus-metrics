@@ -54,13 +54,20 @@ task wrapper(type: Wrapper) {
 
 
 def getGradleVersionForEs() {
+   def latestGradle = '4.5'
+
    def vn = VersionNumber.parse(project.esVersion)
+
+   //Those versions were released after gradle upgrade
+   if (vn >= VersionNumber.parse('5.6.6') && vn.getMajor() == 5) {
+      return latestGradle
+   }
 
    if (vn < VersionNumber.parse('6.1.0')) {
       return '4.0.2'
    }
 
-   return '4.4.1'
+   return latestGradle
 }
 
 def gradleShouldBeDifferent() {
@@ -68,5 +75,5 @@ def gradleShouldBeDifferent() {
 }
 
 def addLicenseInformation() {
- return VersionNumber.parse(project.esVersion) >= VersionNumber.parse('5.6.0')
+ return VersionNumber.parse(project.esVersion) >= VersionNumber.parse('5.5.3')
 }
