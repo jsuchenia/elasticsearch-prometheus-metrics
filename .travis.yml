@@ -4,6 +4,7 @@ jdk:
 dist: trusty
 sudo: required
 env:
+  - ES_VERSION=6.1.3
   - ES_VERSION=6.1.2
   - ES_VERSION=6.1.1
   - ES_VERSION=6.1.0
