@@ -9,7 +9,7 @@ public class OsMetricsGenerator implements MetricsGenerator<OsStats> {
     private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
 
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, OsStats osStats) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, OsStats osStats) {
         logger.debug("Generating output for OS stats: {}", osStats);
 
         writer.addGauge("es_cpu_percentage")
@@ -37,5 +37,7 @@ public class OsMetricsGenerator implements MetricsGenerator<OsStats> {
                 .value(osStats.getSwap().getFree().getBytes(), "memtype", "free")
                 .value(osStats.getSwap().getUsed().getBytes(), "memtype", "used")
                 .value(osStats.getSwap().getTotal().getBytes(), "memtype", "total");
+
+        return writer;
     }
 }

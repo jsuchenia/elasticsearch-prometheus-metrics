@@ -12,7 +12,7 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int INFO_ENTRIES = 1;
     private static final int CLUSTER_SETTINGS_ENTRIES = 3;
     private static final int CLUSTER_HEALTH_ENTRIES = 19;
-    private static final int INDICES_ENTRIES = 9;
+    private static final int INDICES_ENTRIES = 11;
     private static final int TRANSPORT_ENTRIES = 5;
     private static final int JVM_ENTRIES = 12;
     private static final int OS_ENTRIES = 5;

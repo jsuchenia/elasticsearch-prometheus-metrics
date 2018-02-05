@@ -19,7 +19,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGener
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IngestMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
-import pl.suchenia.elasticsearchPrometheusMetrics.generators.PluginInfoMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.PendingTasksMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ProcessMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.TransportMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
@@ -34,6 +34,7 @@ import static org.elasticsearch.rest.RestRequest.Method.GET;
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getClusterHealth;
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getClusterState;
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getNodeStats;
+import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getPendingTasks;
 
 public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
@@ -42,11 +43,11 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final IndicesMetricsGenerator indicesMetricsGenerator = new IndicesMetricsGenerator();
     private final ClusterHealthMetricsGenerator clusterHealthMetricsGenerator = new ClusterHealthMetricsGenerator();
     private final OsMetricsGenerator osMetricsGenerator = new OsMetricsGenerator();
-    private final PluginInfoMetricsGenerator infoMetricsGenerator = new PluginInfoMetricsGenerator();
     private final ClusterStateMetricsGenerator clusterStateMetricsGenerator = new ClusterStateMetricsGenerator();
     private final TransportMetricsGenerator transportMetricsGenerator = new TransportMetricsGenerator();
     private final IngestMetricsGenerator ingestMetricsGenerator = new IngestMetricsGenerator();
     private final ProcessMetricsGenerator processMetricsGenerator = new ProcessMetricsGenerator();
+    private final PendingTasksMetricsGenerator pendingTasksMetricsGenerator = new PendingTasksMetricsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -57,8 +58,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
 
             return getNodeStats(client).thenApply((nodeStats -> {
                 PrometheusFormatWriter writer = createWriter(client);
-                infoMetricsGenerator.generateMetrics(writer, "");
-                transportMetricsGenerator.generateMetrics(writer, nodeStats.getTransport());
+                transportMetricsGenerator.generateMetricsWithHeader(writer, nodeStats.getTransport());
                 jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
                 ingestMetricsGenerator.generateMetrics(writer, nodeStats.getIngestStats());
@@ -70,57 +70,51 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         handlers.put("/_prometheus/indices", (channel, client) -> {
             logger.debug("Generating Indices stats in prometheus format");
 
-            return getNodeStats(client).thenApply((nodeStats -> {
-                PrometheusFormatWriter writer = createWriter(client);
-                infoMetricsGenerator.generateMetrics(writer, "");
-                indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
-                return writer;
-            }));
+            PrometheusFormatWriter writer = createWriter(client);
+            return getNodeStats(client)
+                    .thenApply((nodeStats -> indicesMetricsGenerator.generateMetricsWithHeader(writer, nodeStats.getIndices())));
         });
 
         handlers.put("/_prometheus/cluster", (channel, client) -> {
             logger.debug("Generating Indices stats in prometheus format");
 
-            return getClusterHealth(client).thenApply((clusterResponse -> {
-                PrometheusFormatWriter writer = createWriter(client);
-                infoMetricsGenerator.generateMetrics(writer, "");
-                clusterHealthMetricsGenerator.generateMetrics(writer, clusterResponse);
-                return writer;
-            }));
+            PrometheusFormatWriter writer = createWriter(client);
+            return getClusterHealth(client)
+                    .thenApply((clusterResponse -> clusterHealthMetricsGenerator.generateMetricsWithHeader(writer, clusterResponse)));
         });
 
-        handlers.put("/_prometheus/cluster_settings",
-                (channel, client) -> getClusterState(client)
-                        .thenApply((clusterState -> {
-                            PrometheusFormatWriter writer = createWriter(client);
-                            logger.error("Got settings: {}", client.settings());
-                            infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
-                            clusterStateMetricsGenerator.generateMetrics(writer, clusterState);
-                            return writer;
-                        }
-                        )
-                )
-        );
+        handlers.put("/_prometheus/cluster_settings", (channel, client) -> {
+            logger.debug("Generating cluster settings results");
+
+            PrometheusFormatWriter writer = createWriter(client);
+            return getClusterState(client)
+                    .thenApply((clusterState -> clusterStateMetricsGenerator.generateMetricsWithHeader(writer, clusterState)));
+        });
+
+        handlers.put("/_prometheus/tasks", (channel, client) -> {
+            logger.debug("Generating pending tasks results");
+
+            PrometheusFormatWriter writer = createWriter(client);
+            return getPendingTasks(client)
+                    .thenApply((pendingClusterTasks ->
+                            pendingTasksMetricsGenerator.generateMetricsWithHeader(writer, pendingClusterTasks)));
+        });
 
         handlers.put("/_prometheus", (channel, client) -> {
             logger.debug("Generating ALL stats in prometheus format");
             return getNodeStats(client).thenApply((nodeStats -> {
                 PrometheusFormatWriter writer = createWriter(client);
-                infoMetricsGenerator.generateMetrics(writer, client.settings().get("cluster.name"));
-                jvmMetricsGenerator.generateMetrics(writer, nodeStats.getJvm());
+                jvmMetricsGenerator.generateMetricsWithHeader(writer, nodeStats.getJvm());
                 indicesMetricsGenerator.generateMetrics(writer, nodeStats.getIndices());
                 osMetricsGenerator.generateMetrics(writer, nodeStats.getOs());
                 transportMetricsGenerator.generateMetrics(writer, nodeStats.getTransport());
                 ingestMetricsGenerator.generateMetrics(writer, nodeStats.getIngestStats());
                 processMetricsGenerator.generateMetrics(writer, nodeStats.getProcess());
                 return writer;
-            })).thenCombine(getClusterHealth(client), (writer, clusterHealth) -> {
-                clusterHealthMetricsGenerator.generateMetrics(writer, clusterHealth);
-                return writer;
-            }).thenCombine(getClusterState(client), (writer, clusterStats) -> {
-                clusterStateMetricsGenerator.generateMetrics(writer, clusterStats);
-                return writer;
-            });
+            }))
+                    .thenCombine(getClusterHealth(client), clusterHealthMetricsGenerator::generateMetrics)
+                    .thenCombine(getClusterState(client), clusterStateMetricsGenerator::generateMetrics)
+                    .thenCombine(getPendingTasks(client), pendingTasksMetricsGenerator::generateMetrics);
         });
     }
 

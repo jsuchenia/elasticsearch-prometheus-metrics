@@ -22,7 +22,7 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
     private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
 
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, JvmStats jvmStats) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, JvmStats jvmStats) {
         logger.debug("Generating output for JVM stats: {}", jvmStats);
 
         logger.debug("Now memory: {}", jvmStats.getMem());
@@ -89,5 +89,7 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
                 .value(jvmStats.getMem().getHeapUsedPercent());
 
         //TODO: memory pools
+
+        return writer;
     }
 }

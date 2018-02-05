@@ -11,7 +11,7 @@ public class ClusterStateMetricsGenerator implements MetricsGenerator<ClusterSta
     private static final Logger logger = Loggers.getLogger(ClusterStateMetricsGenerator.class);
 
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, ClusterState clusterState) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, ClusterState clusterState) {
         logger.debug("Generating data about cluster state: {}", clusterState);
 
         ValueWriter persistentGauge = writer.addGauge("es_cluster_persistent_settings")
@@ -25,6 +25,8 @@ public class ClusterStateMetricsGenerator implements MetricsGenerator<ClusterSta
         ValueWriter settingsGauge = writer.addGauge("es_cluster_settings")
                 .withHelp("Cluster effective settings value visible from this node");
         fillSettings(settingsGauge, clusterState.getMetaData().settings());
+
+        return writer;
     }
 
     private void fillSettings(ValueWriter settingsGauge, Settings settings) {

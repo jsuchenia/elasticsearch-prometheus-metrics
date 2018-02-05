@@ -12,7 +12,7 @@ import java.util.Map;
 public class ClusterHealthMetricsGenerator implements MetricsGenerator<ClusterHealthResponse> {
     private static final Logger logger = Loggers.getLogger(ClusterHealthMetricsGenerator.class);
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, ClusterHealthResponse clusterHealth) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, ClusterHealthResponse clusterHealth) {
         logger.debug("Generating data about cluster health: {}", clusterHealth);
 
         //Shards global data
@@ -106,5 +106,7 @@ public class ClusterHealthMetricsGenerator implements MetricsGenerator<ClusterHe
             es_index_status.value(indexStatus.getStatus().value(), "index", indexName);
             es_index_status_type.value(1, "index", indexName, "status", indexStatus.getStatus().name());
         }
+
+        return writer;
     }
 }

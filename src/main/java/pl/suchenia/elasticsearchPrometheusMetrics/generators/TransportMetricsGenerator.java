@@ -9,7 +9,7 @@ public class TransportMetricsGenerator implements MetricsGenerator<TransportStat
     private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
 
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, TransportStats transportStats) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, TransportStats transportStats) {
         logger.debug("Generating output for transport stats: {}", transportStats);
 
         writer.addGauge("es_transport_server_connections")
@@ -28,5 +28,7 @@ public class TransportMetricsGenerator implements MetricsGenerator<TransportStat
         writer.addGauge("es_transport_tx_bytes_count")
                 .withHelp("Total size of send packets")
                 .value(transportStats.txSize().getBytes());
+
+        return writer;
     }
 }

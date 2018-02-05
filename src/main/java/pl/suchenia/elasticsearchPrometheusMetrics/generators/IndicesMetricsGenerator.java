@@ -1,5 +1,6 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
+import com.carrotsearch.hppc.cursors.ObjectLongCursor;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.logging.Loggers;
@@ -14,7 +15,7 @@ public class IndicesMetricsGenerator implements  MetricsGenerator<NodeIndicesSta
     private static final Logger logger = Loggers.getLogger(IndicesMetricsGenerator.class);
 
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, NodeIndicesStats indicesStats) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, NodeIndicesStats indicesStats) {
         logger.debug("Generating output based on indicies stats: {}", indicesStats);
 
         //StoreStats
@@ -62,5 +63,15 @@ public class IndicesMetricsGenerator implements  MetricsGenerator<NodeIndicesSta
                 es_docindex_isthrottled.value(stats.isThrottled() ? 1 : 0, "index", index);
             }
         }
+
+        writer.addGauge("es_fielddata_size_bytes")
+                .withHelp("Size of total fielddata size")
+                .value(indicesStats.getFieldData().getMemorySizeInBytes());
+
+        writer.addGauge("es_fielddata_eviction_count")
+                .withHelp("Number of evictions in fielddata")
+                .value(indicesStats.getFieldData().getEvictions());
+
+        return writer;
     }
 }

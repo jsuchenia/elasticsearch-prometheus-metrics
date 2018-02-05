@@ -8,6 +8,8 @@ import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsResponse;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
+import org.elasticsearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
+import org.elasticsearch.action.admin.cluster.tasks.PendingClusterTasksResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.ClusterState;
 
@@ -35,5 +37,13 @@ public class AsyncRequests {
 
         client.admin().cluster().state(request, result.asActionListener());
         return result.thenApply(ClusterStateResponse::getState);
+    }
+
+    public static CompletableFuture<PendingClusterTasksResponse> getPendingTasks(final Client client) {
+        ActionListenerAdapter<PendingClusterTasksResponse> result = new ActionListenerAdapter<>();
+        PendingClusterTasksRequest request = new PendingClusterTasksRequest();
+
+        client.admin().cluster().pendingClusterTasks(request, result.asActionListener());
+        return result;
     }
 }

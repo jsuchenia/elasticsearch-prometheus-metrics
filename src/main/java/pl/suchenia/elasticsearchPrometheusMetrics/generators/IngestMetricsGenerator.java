@@ -12,7 +12,7 @@ public class IngestMetricsGenerator implements MetricsGenerator<IngestStats> {
     private static final Logger logger = Loggers.getLogger(IngestMetricsGenerator.class);
 
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, IngestStats ingestStats) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, IngestStats ingestStats) {
         logger.debug("Generating metrics about ingest stats: {}", ingestStats);
 
         writer.addCounter("es_ingest_total_count")
@@ -53,5 +53,7 @@ public class IngestMetricsGenerator implements MetricsGenerator<IngestStats> {
             es_ingest_pipeline_current.value(stats.getIngestCurrent(), "pipeline", pipeline);
             es_ingest_pipeline_failed_count.value(stats.getIngestFailedCount(), "pipeline", pipeline);
         }
+
+        return writer;
     }
 }

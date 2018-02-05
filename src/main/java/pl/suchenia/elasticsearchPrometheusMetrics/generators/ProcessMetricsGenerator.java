@@ -16,7 +16,7 @@ public class ProcessMetricsGenerator implements MetricsGenerator<ProcessStats> {
     private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
 
     @Override
-    public void generateMetrics(PrometheusFormatWriter writer, ProcessStats processStats) {
+    public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, ProcessStats processStats) {
         logger.debug("Generating output for Process stats: {}", processStats);
 
         writer.addGauge("process_open_fds")
@@ -38,5 +38,7 @@ public class ProcessMetricsGenerator implements MetricsGenerator<ProcessStats> {
         writer.addGauge("process_virtual_memory_bytes")
                 .withHelp("Virtual memory size in bytes.")
                 .value(processStats.getMem().getTotalVirtual().getBytes());
+
+        return writer;
     }
 }
