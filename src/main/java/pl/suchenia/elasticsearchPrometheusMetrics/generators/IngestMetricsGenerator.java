@@ -4,11 +4,11 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.ingest.IngestStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
-import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
 import java.util.Map;
 
-public class IngestMetricsGenerator implements MetricsGenerator<IngestStats> {
+public class IngestMetricsGenerator extends MetricsGenerator<IngestStats> {
     private static final Logger logger = Loggers.getLogger(IngestMetricsGenerator.class);
 
     @Override
@@ -32,16 +32,16 @@ public class IngestMetricsGenerator implements MetricsGenerator<IngestStats> {
                 .value(ingestStats.getTotalStats().getIngestFailedCount());
 
 
-        ValueWriter es_ingest_pipeline_count = writer.addCounter("es_ingest_pipeline_count")
+        SingleValueWriter es_ingest_pipeline_count = writer.addCounter("es_ingest_pipeline_count")
                 .withHelp("Total number of processed documents during ingestion phase in pipeline");
 
-        ValueWriter es_ingest_pipeline_time_seconds = writer.addCounter("es_ingest_pipeline_time_seconds")
+        SingleValueWriter es_ingest_pipeline_time_seconds = writer.addCounter("es_ingest_pipeline_time_seconds")
                 .withHelp("Total time spend on processed documents during ingestion phase in pipeline");
 
-        ValueWriter es_ingest_pipeline_current = writer.addGauge("es_ingest_pipeline_current")
+        SingleValueWriter es_ingest_pipeline_current = writer.addGauge("es_ingest_pipeline_current")
                 .withHelp("The total number of ingest preprocessing operations that have failed in pipeline");
 
-        ValueWriter es_ingest_pipeline_failed_count = writer.addGauge("es_ingest_pipeline_failed_count")
+        SingleValueWriter es_ingest_pipeline_failed_count = writer.addGauge("es_ingest_pipeline_failed_count")
                 .withHelp("The total number of ingest preprocessing operations that have failed in pipeline");
 
         for (Map.Entry<String, IngestStats.Stats> entry : ingestStats.getStatsPerPipeline().entrySet()) {

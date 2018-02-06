@@ -6,7 +6,8 @@ import org.elasticsearch.monitor.jvm.JvmStats;
 import org.elasticsearch.monitor.jvm.JvmStats.GarbageCollector;
 import pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
-import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.SummaryValueWriter;
 
 /*
  Aligned with process data returned by JVM client
@@ -18,7 +19,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
 */
 
 
-public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
+public class JvmMetricsGenerator extends MetricsGenerator<JvmStats> {
     private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
 
     @Override
@@ -66,7 +67,7 @@ public class JvmMetricsGenerator implements MetricsGenerator<JvmStats> {
                 .withHelp("The total number of classes that have been unloaded since the JVM has started execution")
                 .value(jvmStats.getClasses().getUnloadedClassCount());
 
-        ValueWriter gcValueWriter = writer.addSummary("jvm_gc_collection_seconds")
+        SummaryValueWriter gcValueWriter = writer.addSummary("jvm_gc_collection_seconds")
                 .withHelp("The total number of seconds spend on GC collection");
 
         for (GarbageCollector collector : jvmStats.getGc().getCollectors()) {

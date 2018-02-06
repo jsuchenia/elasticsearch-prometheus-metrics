@@ -12,7 +12,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
  https://github.com/prometheus/client_golang/blob/master/prometheus/process_collector.go
 */
 
-public class ProcessMetricsGenerator implements MetricsGenerator<ProcessStats> {
+public class ProcessMetricsGenerator extends MetricsGenerator<ProcessStats> {
     private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
 
     @Override

@@ -5,7 +5,7 @@ import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.monitor.os.OsStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
-public class OsMetricsGenerator implements MetricsGenerator<OsStats> {
+public class OsMetricsGenerator extends MetricsGenerator<OsStats> {
     private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
 
     @Override

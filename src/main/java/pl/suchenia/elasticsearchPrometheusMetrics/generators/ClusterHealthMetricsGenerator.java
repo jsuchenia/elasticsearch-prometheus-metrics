@@ -5,11 +5,11 @@ import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.cluster.health.ClusterIndexHealth;
 import org.elasticsearch.common.logging.Loggers;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
-import pl.suchenia.elasticsearchPrometheusMetrics.writer.ValueWriter;
+import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
 import java.util.Map;
 
-public class ClusterHealthMetricsGenerator implements MetricsGenerator<ClusterHealthResponse> {
+public class ClusterHealthMetricsGenerator extends MetricsGenerator<ClusterHealthResponse> {
     private static final Logger logger = Loggers.getLogger(ClusterHealthMetricsGenerator.class);
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, ClusterHealthResponse clusterHealth) {
@@ -73,25 +73,25 @@ public class ClusterHealthMetricsGenerator implements MetricsGenerator<ClusterHe
                 .value(1, "status", clusterHealth.getStatus().name());
 
         //Status for each index
-        ValueWriter es_index_active_shards = writer.addGauge("es_index_active_shards")
+        SingleValueWriter es_index_active_shards = writer.addGauge("es_index_active_shards")
                 .withHelp("Number of active shards assigned to index");
 
-        ValueWriter es_index_active_primary_shards = writer.addGauge("es_index_active_primary_shards")
+        SingleValueWriter es_index_active_primary_shards = writer.addGauge("es_index_active_primary_shards")
                 .withHelp("Number of active primary shards assigned to index");
 
-        ValueWriter es_index_initializing_shards = writer.addGauge("es_index_initializing_shards")
+        SingleValueWriter es_index_initializing_shards = writer.addGauge("es_index_initializing_shards")
                 .withHelp("Number of initializing shards assigned to index");
 
-        ValueWriter es_index_relocating_shards = writer.addGauge("es_index_relocating_shards")
+        SingleValueWriter es_index_relocating_shards = writer.addGauge("es_index_relocating_shards")
                 .withHelp("Number of initializing shards assigned to index");
 
-        ValueWriter es_index_unassigned_shards = writer.addGauge("es_index_unassigned_shards")
+        SingleValueWriter es_index_unassigned_shards = writer.addGauge("es_index_unassigned_shards")
                 .withHelp("Number of initializing shards assigned to index");
 
-        ValueWriter es_index_status = writer.addGauge("es_index_status")
+        SingleValueWriter es_index_status = writer.addGauge("es_index_status")
                 .withHelp("Status of index");
 
-        ValueWriter es_index_status_type = writer.addGauge("es_index_status_type")
+        SingleValueWriter es_index_status_type = writer.addGauge("es_index_status_type")
                 .withHelp("Inde status per type");
 
         for (Map.Entry<String, ClusterIndexHealth> indexStatusEntry : clusterHealth.getIndices().entrySet()) {

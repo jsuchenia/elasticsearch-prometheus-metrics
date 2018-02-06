@@ -11,16 +11,16 @@ public class PrometheusFormatWriter {
         this.globalLabels = globalLabels;
     }
 
-    public MetricDefinitionBuilder addGauge(String name) {
-        return new MetricDefinitionBuilder(writer, "gauge", name, globalLabels);
+    public SingleMetricsDefinitionBuilder addGauge(String name) {
+        return new SingleMetricsDefinitionBuilder(MetricType.GAUGE, writer, name, globalLabels);
     }
 
-    public MetricDefinitionBuilder addCounter(String name) {
-        return new MetricDefinitionBuilder(writer, "counter", name, globalLabels);
+    public SingleMetricsDefinitionBuilder addCounter(String name) {
+        return new SingleMetricsDefinitionBuilder(MetricType.COUNTER, writer, name, globalLabels);
     }
 
-    public MetricDefinitionBuilder addSummary(String name) {
-        return new MetricDefinitionBuilder(writer, "summary", name, globalLabels);
+    public SummaryMetricsDefinitionBuilder addSummary(String name) {
+        return new SummaryMetricsDefinitionBuilder(writer, name, globalLabels);
     }
 
     public String toString() {

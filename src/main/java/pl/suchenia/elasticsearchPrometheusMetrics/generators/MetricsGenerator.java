@@ -5,8 +5,8 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 import java.io.IOException;
 
-public interface MetricsGenerator<T> {
-    default PrometheusFormatWriter generateMetricsWithHeader(PrometheusFormatWriter writer, T inputParam) {
+public abstract class MetricsGenerator<T> {
+    public PrometheusFormatWriter generateMetricsWithHeader(PrometheusFormatWriter writer, T inputParam) {
         String version = MetricsGenerator.class.getPackage().getImplementationVersion();
         writer.addGauge("es_prometheus_version")
                 .withHelp("Plugin version to track across a cluster")
@@ -15,5 +15,5 @@ public interface MetricsGenerator<T> {
         return generateMetrics(writer, inputParam);
     }
 
-    PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, T inputData);
+    abstract PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, T inputData);
 }

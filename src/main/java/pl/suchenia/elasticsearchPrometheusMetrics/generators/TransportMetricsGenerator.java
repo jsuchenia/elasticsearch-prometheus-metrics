@@ -5,7 +5,7 @@ import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.transport.TransportStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
-public class TransportMetricsGenerator implements MetricsGenerator<TransportStats>{
+public class TransportMetricsGenerator extends MetricsGenerator<TransportStats>{
     private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
 
     @Override
