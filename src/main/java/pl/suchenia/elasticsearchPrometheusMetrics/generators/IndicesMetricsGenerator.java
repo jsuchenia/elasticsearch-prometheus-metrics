@@ -13,7 +13,11 @@ import org.elasticsearch.indices.NodeIndicesStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
+
+import static javax.management.Query.value;
 
 public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats> {
     private static final Logger logger = Loggers.getLogger(IndicesMetricsGenerator.class);
@@ -127,7 +131,7 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
                 .value(docsStats.getDeleted());
         writer.addGauge("es_common_docs_size_bytes")
                 .withHelp("Size in bytes occupied by all docs")
-                .value(docsStats.getTotalSizeInBytes());
+                .value(getDynamicValue(docsStats, "getTotalSizeInBytes"));
     }
 
     private void writeStoreStats(PrometheusFormatWriter writer, StoreStats storeStats) {
