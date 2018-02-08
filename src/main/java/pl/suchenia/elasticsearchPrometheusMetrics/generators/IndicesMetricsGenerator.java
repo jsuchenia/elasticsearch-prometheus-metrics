@@ -22,8 +22,8 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, NodeIndicesStats indicesStats) {
         logger.debug("Generating output based on indicies stats: {}", indicesStats);
 
-        writeStoreStats(writer, indicesStats.getStore());
         writeDocsStats(writer, indicesStats.getDocs());
+        writeStoreStats(writer, indicesStats.getStore());
         writeIndexingStats(writer, indicesStats.getIndexing());
         writeFeldsDataStats(writer, indicesStats.getFieldData());
         writeQueryCacheStats(writer, indicesStats.getQueryCache());
@@ -37,7 +37,7 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writer.addGauge("es_search_query_current")
                 .withHelp("Number of search queries executed in cluster")
                 .value(search.getTotal().getQueryCurrent());
-        writer.addSummary("es_search_query_count")
+        writer.addSummary("es_search_query")
                 .withHelp("Total number of search queries executed in cluster")
                 .summary(search.getTotal().getQueryCount(), search.getTotal().getQueryTimeInMillis());
     }
@@ -125,6 +125,9 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writer.addCounter("es_common_docs_deleted_count")
                 .withHelp("Elasticsearch documents deleted")
                 .value(docsStats.getDeleted());
+        writer.addGauge("es_common_docs_size_bytes")
+                .withHelp("Size in bytes occupied by all docs")
+                .value(docsStats.getTotalSizeInBytes());
     }
 
     private void writeStoreStats(PrometheusFormatWriter writer, StoreStats storeStats) {

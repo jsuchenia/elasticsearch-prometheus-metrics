@@ -1,0 +1,168 @@
+{{ template "head" . }}
+{{ template "prom_right_table_head" }}
+
+{{ with printf "es_prometheus_version{node='%s',cluster='%s',}" .Params.node .Params.cluster| query | first }}
+<tr>
+  <th>Cluster</th>
+  <th>{{ .Labels.cluster}}</th>
+</tr>
+<tr>
+  <th>Node</th>
+  <th>{{ .Labels.node}}</th>
+</tr>
+<tr>
+  <th>ES Version</th>
+  <th>{{ .Labels.es_version}}</th>
+</tr>
+<tr>
+  <th>Plugin Version</th>
+  <th>{{ .Labels.pluginVersion}}</th>
+</tr>
+{{ end }}
+<tr>
+  <th>Uptime</th>
+  <th>{{ printf "es_jvm_uptime{node='%s',cluster='%s',} / 1000" .Params.node .Params.cluster |query | first | value | humanizeDuration }}</th>
+</tr>
+<tr><th colspan="2"><span class="label label-primary">Documents</span></th></tr>
+<tr>
+ <th>All documents</th>
+ <th>{{template "prom_query_drilldown" args (printf "es_common_docs_count{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" "humanize"}}</th>
+</tr>
+<tr>
+ <th>Deleted documents</th>
+ <th>{{template "prom_query_drilldown" args (printf "es_common_docs_deleted_count{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" "humanize"}}</th>
+</tr>
+<tr>
+ <th>Documents size</th>
+ <th>{{template "prom_query_drilldown" args (printf "es_common_docs_size_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+</tr>
+<tr>
+ <th>Storage size</th>
+ <th>{{template "prom_query_drilldown" args (printf "es_common_store_size{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+</tr>
+<tr>
+ <th>Fieldata size</th>
+ <th>{{template "prom_query_drilldown" args (printf "es_fielddata_size_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+</tr>
+<tr>
+ <th>Querycache size</th>
+ <th>{{template "prom_query_drilldown" args (printf "es_querycache_memory_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+</tr>
+<tr>
+ <th>Querycache bytes</th>
+ <th>{{template "prom_query_drilldown" args (printf "es_querycache_size{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+</tr>
+<tr><th colspan="2"><span class="label label-primary">OS</span></th></tr>
+{{ range printf "es_memory{node='%s',cluster='%s'}" .Params.node .Params.cluster | query }}
+ <tr>
+  <th>OS memory - {{ .Labels.memtype }}</th>
+  <th>{{template "prom_query_drilldown" args (printf "es_memory{node='%s',cluster='%s',memtype='%s',}" .Labels.node .Labels.cluster .Labels.memtype) "b" "humanize"}}</th>
+</tr>
+{{end}}
+<tr>
+  <th>CPU</th>
+  <th>{{template "prom_query_drilldown" args (printf "es_cpu_percentage{node='%s',cluster='%s',}" .Params.node .Params.cluster) "%" ""}}</th>
+</tr>
+<tr><th colspan="2"><span class="label label-primary">Memory</span></th></tr>
+{{ range printf "jvm_memory_bytes_used{node='%s',cluster='%s'}" .Params.node .Params.cluster | query }}
+ <tr>
+  <th>Memory used - {{ .Labels.area }}</th>
+  <th>{{template "prom_query_drilldown" args (printf "jvm_memory_bytes_used{node='%s',cluster='%s',area='%s',}" .Labels.node .Labels.cluster .Labels.area) "b" "humanize"}}</th>
+</tr>
+{{end}}
+
+{{ range printf "jvm_memory_bytes_committed{node='%s',cluster='%s'}" .Params.node .Params.cluster | query }}
+ <tr>
+  <th>Memory commited - {{ .Labels.area }}</th>
+  <th>{{template "prom_query_drilldown" args (printf "jvm_memory_bytes_committed{node='%s',cluster='%s',area='%s',}" .Labels.node .Labels.cluster .Labels.area) "b" "humanize"}}</th>
+</tr>
+{{end}}
+<tr><th colspan="2"><span class="label label-primary">JVM</span></th></tr>
+<tr>
+  <th>Threads (current)</th>
+  <th>{{template "prom_query_drilldown" args (printf "jvm_threads_current{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+</tr>
+<tr>
+  <th>Threads (peak)</th>
+  <th>{{template "prom_query_drilldown" args (printf "jvm_threads_peak{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+</tr>
+<tr>
+  <th>JVM classes loaded</th>
+  <th>{{template "prom_query_drilldown" args (printf "jvm_classes_loaded{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+</tr>
+<tr>
+  <th>JVM classes loaded (total)</th>
+  <th>{{template "prom_query_drilldown" args (printf "jvm_classes_loaded_total{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+</tr>
+<tr>
+  <th>JVM classes unloaded (total)</th>
+  <th>{{template "prom_query_drilldown" args (printf "jvm_classes_unloaded_total{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+</tr>
+{{ template "prom_right_table_tail" }}
+{{ template "prom_content_head" . }}
+<h1>ES node status</h1>
+
+<h3>Documents in cluster</h3>
+<div id="documentsGraph"></div>
+<script>
+new PromConsole.Graph({
+  node: document.querySelector("#documentsGraph"),
+  expr: "es_common_docs_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  renderer: 'area',
+  yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yTitle: 'Documents'
+})
+</script>
+<h3>Queries in cluster</h3>
+<div id="queriesGraph"></div>
+<script>
+new PromConsole.Graph({
+  node: document.querySelector("#queriesGraph"),
+  expr: "es_search_query_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  renderer: 'area',
+  yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yTitle: 'Queries'
+})
+</script>
+
+<h3>Active shards</h3>
+<div id="shardsGraph"></div>
+<script>
+new PromConsole.Graph({
+  node: document.querySelector("#shardsGraph"),
+  expr: "es_index_active_shards{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  renderer: 'line',
+  yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yTitle: 'Shards'
+})
+</script>
+
+<h3>Ingested documents</h3>
+<div id="ingestGraph"></div>
+<script>
+new PromConsole.Graph({
+  node: document.querySelector("#ingestGraph"),
+  expr: "es_ingest_total_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  renderer: 'line',
+  yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yTitle: 'Documents'
+})
+</script>
+<h3>Tasks in queue</h3>
+<div id="tasksGraph"></div>
+<script>
+new PromConsole.Graph({
+  node: document.querySelector("#tasksGraph"),
+  expr: "es_tasks_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  renderer: 'line',
+  yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+  yTitle: 'Tasks'
+})
+</script>
+{{ template "prom_content_tail" . }}
+{{ template "tail" }}

@@ -2,7 +2,7 @@ language: java
 jdk:
 - oraclejdk8
 dist: trusty
-sudo: required
+sudo: false
 env:
   - ES_VERSION=6.1.3
   - ES_VERSION=6.1.2
@@ -29,6 +29,7 @@ env:
 
 script:
 - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+- zip -9 -r console.zip console*
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -47,6 +48,7 @@ deploy:
   file:
   - build/distributions/*.zip
   - elastic-rules.*
+  - console.zip
   skip_cleanup: true
   on:
     tags: true
