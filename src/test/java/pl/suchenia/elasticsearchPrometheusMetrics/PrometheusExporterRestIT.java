@@ -19,9 +19,12 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int INGEST_ENTRIES = 8;
     private static final int PROCESS_ENTRIES = 5;
     private static final int TASKS_ENTRIES = 2;
+    private static final int BREAKER_ENTRIES = 4;
+    private static final int FS_ENTRIES = 6;
 
-    private static final int NODE_ENTRIES = TRANSPORT_ENTRIES + JVM_ENTRIES + OS_ENTRIES + INGEST_ENTRIES + PROCESS_ENTRIES;
-    private static final int ALL_ENTRIES = NODE_ENTRIES + INDICES_ENTRIES + CLUSTER_HEALTH_ENTRIES
+    private static final int NODE_ENTRIES = TRANSPORT_ENTRIES + JVM_ENTRIES + OS_ENTRIES + INGEST_ENTRIES
+            + PROCESS_ENTRIES + BREAKER_ENTRIES + FS_ENTRIES + INDICES_ENTRIES;
+    private static final int ALL_ENTRIES = NODE_ENTRIES + CLUSTER_HEALTH_ENTRIES
             + CLUSTER_SETTINGS_ENTRIES + TASKS_ENTRIES;
 
 
@@ -37,13 +40,6 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(NODE_ENTRIES + INFO_ENTRIES, countLines(response));
-    }
-
-    public void testIfIndicesContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/indices");
-
-        assertEquals(200, response.getStatusLine().getStatusCode());
-        assertEquals(INDICES_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
     public void testIfClusterContainsProperNumberOfEntries() throws IOException {

@@ -18,7 +18,6 @@ After installation it will expose few HTTP endpoints:
 * */_prometheus/node* - with details about node including:
     * JVM - most of metric aligned with [client_java](https://github.com/prometheus/client_java) code
     * OS - metrics about an operating system
-* */_prometheus/indices* - details about Indices stats
 * */_prometheus/cluster* - Cluster and indices status
 * */_prometheus/cluster_settings* - Cluster wide settings to check global run-time values as metrics
 * */_prometheus* - Overall status - includes all metrics from above endpoints

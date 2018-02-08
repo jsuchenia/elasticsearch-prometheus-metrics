@@ -12,15 +12,6 @@ import java.lang.reflect.Method;
 public abstract class MetricsGenerator<T> {
     private static final Logger logger = Loggers.getLogger(MetricsGenerator.class);
 
-    public PrometheusFormatWriter generateMetricsWithHeader(PrometheusFormatWriter writer, T inputParam) {
-        String version = MetricsGenerator.class.getPackage().getImplementationVersion();
-        writer.addGauge("es_prometheus_version")
-                .withHelp("Plugin version to track across a cluster")
-                .value(1, "pluginVersion", version, "es_version", Version.CURRENT.toString());
-
-        return generateMetrics(writer, inputParam);
-    }
-
     static double getDynamicValue(Object obj, String methodName) {
         try {
             Method method = obj.getClass().getMethod(methodName);
