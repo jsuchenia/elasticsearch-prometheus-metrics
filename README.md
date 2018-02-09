@@ -4,9 +4,9 @@
 It can deliver basic information about cluster, indices and JVM status in an asynchronous way. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Installation
-To install this plugin just add it into your version of ES. Example for *0.8.1* version for *ES 6.1.3*:
+To install this plugin just add it into your version of ES. Example for *0.9.0* version for *ES 6.1.3*:
 ```
-bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.8.1/prometheus-metrics-0.8.1-6.1.3.zip
+bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.9.0/prometheus-metrics-0.9.0-6.1.3.zip
 ```
 
 and register it in your prometheus & add *rules!!*
@@ -23,6 +23,10 @@ After installation it will expose few HTTP endpoints:
 * */_prometheus* - Overall status - includes all metrics from above endpoints
 
 To use it just add target URL to your prometheus: `http://elasticsearch.domain.com:9200/_prometheus`
+
+## Console
+Together with plugin & rules you can find here a [console](https://prometheus.io/docs/visualization/consoles/) templates. When extracted into /etc/prometheus/ (two directories: console and consoles_lib)
+you will find out additional button with few simple dashbards about cluster and nodes
 
 ## Rules
 Simple rule to monitor cluster health (v1 version):
