@@ -1,15 +1,19 @@
 # prometheus-metrics plugin for ElasticSearch [![Build Status](https://travis-ci.org/jsuchenia/elasticsearch-prometheus-metrics.svg?branch=master)](https://travis-ci.org/jsuchenia/elasticsearch-prometheus-metrics)
 
-[Elasticsearch](https://www.elastic.co/products/elasticsearch) exporter plugin returns internal status data in a [Prometheus](https://prometheus.io) metrics format for monitoring and alerting purposes. *Comes together with rules for alerting* 
+[Elasticsearch](https://www.elastic.co/products/elasticsearch) exporter plugin returns internal status data in a [Prometheus](https://prometheus.io) metrics format for monitoring and alerting purposes. *Comes together with rules for alerting*
 It can deliver basic information about cluster, indices and JVM status in an asynchronous way. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Installation
-To install this plugin just add it into your version of ES. Example for *0.9.0* version for *ES 6.1.3*:
+To install this plugin just add it into your version of ES. Example for *0.9.2* version for *ES 6.1.3*:
 ```
-bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.9.0/prometheus-metrics-0.9.0-6.1.3.zip
+bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.9.2/prometheus-metrics-0.9.2-6.1.3.zip
 ```
 
-and register it in your prometheus & add *rules!!*
+and register it in your prometheus & add *rules!!*. Example docker image can be run using a command:
+```
+  docker run -p 9090:9090 jsuchenia/prometheus-elasticsearch:v2.1.0-0.9.2
+```
+and visit [http://localhost:9200](http://localhost:9200)
 
 ## Features
 Run of variety of Elasticsearch versions without any dependency - just pure asynchroneus java - so it's not blocking threads with sync calls.

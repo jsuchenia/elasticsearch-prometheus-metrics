@@ -128,11 +128,21 @@ jobs:
       script:
       - cd prometheus && zip -9 -r ../console.zip console*
     - stage: docker
+      env:
+        - PROMETHEUS_VERSION=v2.1.0
       script:
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         - cp elastic-rules.rule.yml prometheus/elastic-rules.yml
-        - "docker build --build-arg PROMETHEUS_VERSION=v2.1.0 -t jsuchenia/prometheus-elasticsearch:v2.1.0-$TRAVIS_TAG prometheus"
-        - docker push jsuchenia/prometheus-elasticsearch:v2.1.0-$TRAVIS_TAG
+        - "docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS_VERSION -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS_VERSION-$TRAVIS_TAG prometheus"
+        - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS_VERSION-$TRAVIS_TAG
+    - stage: docker
+      env:
+        - PROMETHEUS_VERSION=v2.0.0
+      script:
+        - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        - cp elastic-rules.rule.yml prometheus/elastic-rules.yml
+        - "docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS_VERSION -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS_VERSION-$TRAVIS_TAG prometheus"
+        - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS_VERSION-$TRAVIS_TAG
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
