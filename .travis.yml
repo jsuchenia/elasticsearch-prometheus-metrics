@@ -1,11 +1,16 @@
 language: java
 jdk:
 - oraclejdk8
+services:
+  - docker
+
 dist: trusty
 sudo: false
 stages:
   - build
   - build-console
+  - name: docker
+    if: tag IS present
 
 jobs:
   include:
@@ -121,7 +126,13 @@ jobs:
       - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
     - stage: build-console
       script:
-      - zip -9 -r console.zip console*
+      - cd prometheus && zip -9 -r ../console.zip console*
+    - stage: docker
+      script:
+        - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+        - cp elastic-rules.rule.yml prometheus/elastic-rules.yml
+        - "docker build --build-arg PROMETHEUS_VERSION=v2.1.0 -t jsuchenia/prometheus-elasticsearch:v2.1.0-$TRAVIS_TAG prometheus"
+        - docker push jsuchenia/prometheus-elasticsearch:v2.1.0-$TRAVIS_TAG
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

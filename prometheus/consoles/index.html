@@ -3,6 +3,16 @@
 {{ template "prom_right_table_tail" }}
 {{ template "prom_content_head" . }}
 
+{{ define "status" }}
+   {{ if gt . 1.0 }}
+       <span class="label label-danger">CRITICAL</span>
+   {{ else if eq . 1.0}}
+       <span class="label label-warning">WARNING</span>
+  {{ else }}
+       <span class="label label-success">OK</span>
+  {{ end }}
+{{ end }}
+
 <h1>Elasticsearch cluster overview</h1>
 {{if printf "up == 0" | query }}
 <div class="alert alert-success" role="alert">Some systems are down, please check them on <a href="/targets">tagrets page</a></div>
@@ -20,7 +30,7 @@
 {{ range "max(es_status) by (cluster)"|query}}
 <tr>
   <td>{{ .Labels.cluster }}</td>
-  <td>{{ if gt 1.0 .Value }}<span class="label label-danger">CRITICAL</span>{{ else if eq 1.0 .Value}}<span class="label label-warning">WARNING</span>{{ else }}<span class="label label-success">OK</span>{{ end }}</td>
+  <td>{{ template "status" .Value}}</td>
   <td>{{ printf "count(es_status{cluster='%s',})" .Labels.cluster |query|first|value }}</td>
   <td>{{ printf "max(es_active_shards{cluster='%s'})" .Labels.cluster |query|first|value}}</td>
   <td>{{ printf "max(es_active_primary_shards{cluster='%s'})" .Labels.cluster |query|first|value}}</td>
@@ -39,7 +49,7 @@
   <tr>
     <td><a href="es.html?node={{ .Labels.node | urlquery}}&amp;cluster={{ .Labels.cluster | urlquery }}">{{ .Labels.node | title }}</a></td>
     <td>{{ printf "es_prometheus_version{node='%s',cluster='%s',}" .Labels.node .Labels.cluster | query | first | label "es_version" }}</td>
-    <td>{{ if gt 1.0 .Value }}<span class="label label-danger">CRITICAL</span>{{ else if eq 1.0 .Value}}<span class="label label-warning">WARNING</span>{{ else }}<span class="label label-success">OK</span>{{ end }}</td>
+    <td>{{ template "status" .Value}}</td>
     <td>{{template "prom_query_drilldown" args (printf "es_cpu_percentage{node='%s',cluster='%s',}" .Labels.node .Labels.cluster ) "%" ""}}</td>
     <td>{{template "prom_query_drilldown" args (printf "es_jvm_memory_heap_used_percent{node='%s',cluster='%s',}" .Labels.node .Labels.cluster) "%" ""}}</td>
   </tr>
