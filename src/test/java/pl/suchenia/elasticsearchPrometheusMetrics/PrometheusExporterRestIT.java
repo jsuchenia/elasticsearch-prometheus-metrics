@@ -21,9 +21,10 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int TASKS_ENTRIES = 2;
     private static final int BREAKER_ENTRIES = 4;
     private static final int FS_ENTRIES = 6;
+    private static final int THREAD_ENTRIES = 6;
 
     private static final int NODE_ENTRIES = TRANSPORT_ENTRIES + JVM_ENTRIES + OS_ENTRIES + INGEST_ENTRIES
-            + PROCESS_ENTRIES + BREAKER_ENTRIES + FS_ENTRIES + INDICES_ENTRIES;
+            + PROCESS_ENTRIES + BREAKER_ENTRIES + FS_ENTRIES + INDICES_ENTRIES + THREAD_ENTRIES;
     private static final int ALL_ENTRIES = NODE_ENTRIES + CLUSTER_HEALTH_ENTRIES
             + CLUSTER_SETTINGS_ENTRIES + TASKS_ENTRIES;
 

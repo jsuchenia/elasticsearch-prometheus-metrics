@@ -25,6 +25,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.PendingTasksMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ProcessMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.ThreadPoolMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.TransportMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
@@ -55,6 +56,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final PendingTasksMetricsGenerator pendingTasksMetricsGenerator = new PendingTasksMetricsGenerator();
     private final CircuitBreakerMetricsGenerator circuitBreakerMetricsGenerator = new CircuitBreakerMetricsGenerator();
     private final FsMetricsGenerator fsMetricsGenerator = new FsMetricsGenerator();
+    private final ThreadPoolMetricsGenerator threadPoolMetricsGenerator = new ThreadPoolMetricsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -122,6 +124,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         processMetricsGenerator.generateMetrics(writer, nodeStats.getProcess());
         circuitBreakerMetricsGenerator.generateMetrics(writer, nodeStats.getBreaker());
         fsMetricsGenerator.generateMetrics(writer, nodeStats.getFs());
+        threadPoolMetricsGenerator.generateMetrics(writer, nodeStats.getThreadPool());
 
         return writer;
     }

@@ -29,5 +29,5 @@ public abstract class MetricsGenerator<T> {
             return -1.0;
         }
     }
-    abstract PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, T inputData);
+    public abstract PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, T inputData);
 }
