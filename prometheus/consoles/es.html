@@ -2,101 +2,102 @@
 {{ template "prom_right_table_head" }}
 
 {{ with printf "es_prometheus_version{node='%s',cluster='%s',}" .Params.node .Params.cluster| query | first }}
+<tr><th colspan="2">Info</th></tr>
 <tr>
-  <th>Cluster</th>
-  <th>{{ .Labels.cluster}}</th>
+  <td>Cluster</td>
+  <td>{{ .Labels.cluster}}</td>
 </tr>
 <tr>
-  <th>Node</th>
-  <th>{{ .Labels.node}}</th>
+  <td>Node</td>
+  <td>{{ .Labels.node}}</td>
 </tr>
 <tr>
-  <th>ES Version</th>
-  <th>{{ .Labels.es_version}}</th>
-</tr>
+  <td>ES Version</td>
+  <td>{{ .Labels.es_version}}</td>
+</td>
 <tr>
-  <th>Plugin Version</th>
-  <th>{{ .Labels.pluginVersion}}</th>
+  <td>Plugin Version</td>
+  <td>{{ .Labels.pluginVersion}}</td>
 </tr>
 {{ end }}
 <tr>
-  <th>Uptime</th>
-  <th>{{ printf "es_jvm_uptime{node='%s',cluster='%s',} / 1000" .Params.node .Params.cluster |query | first | value | humanizeDuration }}</th>
+  <td>Uptime</td>
+  <td>{{ printf "es_jvm_uptime{node='%s',cluster='%s',} / 1000" .Params.node .Params.cluster |query | first | value | humanizeDuration }}</td>
 </tr>
-<tr><th colspan="2"><span class="label label-primary">Documents</span></th></tr>
+<tr><th colspan="2">Documents</th></tr>
 <tr>
- <th>All documents</th>
- <th>{{template "prom_query_drilldown" args (printf "es_common_docs_count{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" "humanize"}}</th>
-</tr>
-<tr>
- <th>Deleted documents</th>
- <th>{{template "prom_query_drilldown" args (printf "es_common_docs_deleted_count{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" "humanize"}}</th>
+ <td>All documents</td>
+ <td>{{template "prom_query_drilldown" args (printf "es_common_docs_count{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" "humanize"}}</td>
 </tr>
 <tr>
- <th>Documents size</th>
- <th>{{template "prom_query_drilldown" args (printf "es_common_docs_size_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+ <td>Deleted documents</td>
+ <td>{{template "prom_query_drilldown" args (printf "es_common_docs_deleted_count{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" "humanize"}}</td>
 </tr>
 <tr>
- <th>Storage size</th>
- <th>{{template "prom_query_drilldown" args (printf "es_common_store_size{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+ <td>Documents size</td>
+ <td>{{template "prom_query_drilldown" args (printf "es_common_docs_size_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</td>
 </tr>
 <tr>
- <th>Fieldata size</th>
- <th>{{template "prom_query_drilldown" args (printf "es_fielddata_size_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+ <td>Storage size</td>
+ <td>{{template "prom_query_drilldown" args (printf "es_common_store_size{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</td>
 </tr>
 <tr>
- <th>Querycache size</th>
- <th>{{template "prom_query_drilldown" args (printf "es_querycache_memory_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+ <td>Fieldata size</td>
+ <td>{{template "prom_query_drilldown" args (printf "es_fielddata_size_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</td>
 </tr>
 <tr>
- <th>Querycache bytes</th>
- <th>{{template "prom_query_drilldown" args (printf "es_querycache_size{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</th>
+ <td>Querycache size</td>
+ <td>{{template "prom_query_drilldown" args (printf "es_querycache_memory_bytes{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</td>
 </tr>
-<tr><th colspan="2"><span class="label label-primary">OS</span></th></tr>
+<tr>
+ <td>Querycache bytes</td>
+ <td>{{template "prom_query_drilldown" args (printf "es_querycache_size{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</td>
+</tr>
+<tr><th colspan="2">OS</th></tr>
 {{ range printf "es_memory{node='%s',cluster='%s'}" .Params.node .Params.cluster | query }}
  <tr>
-  <th>OS memory - {{ .Labels.memtype }}</th>
-  <th>{{template "prom_query_drilldown" args (printf "es_memory{node='%s',cluster='%s',memtype='%s',}" .Labels.node .Labels.cluster .Labels.memtype) "b" "humanize"}}</th>
+  <td>OS memory - {{ .Labels.memtype }}</td>
+  <td>{{template "prom_query_drilldown" args (printf "es_memory{node='%s',cluster='%s',memtype='%s',}" .Labels.node .Labels.cluster .Labels.memtype) "b" "humanize"}}</td>
 </tr>
 {{end}}
 <tr>
-  <th>CPU</th>
-  <th>{{template "prom_query_drilldown" args (printf "es_cpu_percentage{node='%s',cluster='%s',}" .Params.node .Params.cluster) "%" ""}}</th>
+  <td>CPU</td>
+  <td>{{template "prom_query_drilldown" args (printf "es_cpu_percentage{node='%s',cluster='%s',}" .Params.node .Params.cluster) "%" ""}}</td>
 </tr>
-<tr><th colspan="2"><span class="label label-primary">Memory</span></th></tr>
+<tr><th colspan="2">Memory</th></tr>
 {{ range printf "jvm_memory_bytes_used{node='%s',cluster='%s'}" .Params.node .Params.cluster | query }}
  <tr>
-  <th>Memory used - {{ .Labels.area }}</th>
-  <th>{{template "prom_query_drilldown" args (printf "jvm_memory_bytes_used{node='%s',cluster='%s',area='%s',}" .Labels.node .Labels.cluster .Labels.area) "b" "humanize"}}</th>
+  <td>Memory used - {{ .Labels.area }}</td>
+  <td>{{template "prom_query_drilldown" args (printf "jvm_memory_bytes_used{node='%s',cluster='%s',area='%s',}" .Labels.node .Labels.cluster .Labels.area) "b" "humanize"}}</td>
 </tr>
 {{end}}
 
 {{ range printf "jvm_memory_bytes_committed{node='%s',cluster='%s'}" .Params.node .Params.cluster | query }}
  <tr>
-  <th>Memory commited - {{ .Labels.area }}</th>
-  <th>{{template "prom_query_drilldown" args (printf "jvm_memory_bytes_committed{node='%s',cluster='%s',area='%s',}" .Labels.node .Labels.cluster .Labels.area) "b" "humanize"}}</th>
+  <td>Memory commited - {{ .Labels.area }}</td>
+  <td>{{template "prom_query_drilldown" args (printf "jvm_memory_bytes_committed{node='%s',cluster='%s',area='%s',}" .Labels.node .Labels.cluster .Labels.area) "b" "humanize"}}</td>
 </tr>
 {{end}}
-<tr><th colspan="2"><span class="label label-primary">JVM</span></th></tr>
+<tr><th colspan="2">JVM</th></tr>
 <tr>
-  <th>Threads (current)</th>
-  <th>{{template "prom_query_drilldown" args (printf "jvm_threads_current{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+  <td>Threads (current)</td>
+  <td>{{template "prom_query_drilldown" args (printf "jvm_threads_current{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</td>
 </tr>
 <tr>
-  <th>Threads (peak)</th>
-  <th>{{template "prom_query_drilldown" args (printf "jvm_threads_peak{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+  <td>Threads (peak)</td>
+  <td>{{template "prom_query_drilldown" args (printf "jvm_threads_peak{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</td>
 </tr>
 <tr>
-  <th>JVM classes loaded</th>
-  <th>{{template "prom_query_drilldown" args (printf "jvm_classes_loaded{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+  <td>JVM classes loaded</td>
+  <td>{{template "prom_query_drilldown" args (printf "jvm_classes_loaded{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</td>
 </tr>
 <tr>
-  <th>JVM classes loaded (total)</th>
-  <th>{{template "prom_query_drilldown" args (printf "jvm_classes_loaded_total{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+  <td>JVM classes loaded (total)</td>
+  <td>{{template "prom_query_drilldown" args (printf "jvm_classes_loaded_total{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</td>
 </tr>
 <tr>
-  <th>JVM classes unloaded (total)</th>
-  <th>{{template "prom_query_drilldown" args (printf "jvm_classes_unloaded_total{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</th>
+  <td>JVM classes unloaded (total)</td>
+  <td>{{template "prom_query_drilldown" args (printf "jvm_classes_unloaded_total{node='%s',cluster='%s',}" .Params.node .Params.cluster) "" ""}}</td>
 </tr>
 {{ template "prom_right_table_tail" }}
 {{ template "prom_content_head" . }}
