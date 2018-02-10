@@ -160,3 +160,40 @@ groups:
       description: Node {{$labels.instance}} reports failed ingestions. Some documents
         were lost
       summary: Node {{$labels.instance}} ingestion failed
+  - alert: ElasticNoSpaceWithin24h
+    expr: predict_linear(es_fs_free_bytes[1h], 24 * 3600) < 0
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      description: Elasticsearch reports that space on {{ $labels.node }}({{ $labels.instance
+        }}) will run within 24h. Please check disk usage on that host
+      summary: Elasticsearch {{ $labels.node }} at {{ $labels.cluster }} will be out
+        of disk space within 24h
+  - alert: ElasticNoAvailableSpace
+    expr: es_fs_path_free_bytes * 100 / es_fs_path_total_bytes < 10
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      description: Elasticsearch reports that there  are only {{ $value }}% left on
+        {{ $labels.path }} at {{$labels.instance}}. Please check it
+      summary: No Available space on {{$labels.instance}}
+  - alert: ElasticCircuitEnabled
+    expr: delta(es_breaker_tripped[1m]) > 0
+    labels:
+      severity: warning
+    annotations:
+      description: Elasticsearch circuit breaker {{ $labels.circuit_name }} was enabled
+        within last minute on {{$labels.node}} ({{$labels.instance}}). Looks like
+        high memory pressure on this pool
+      summary: Circuit breaker {{ $labels.circuit_name}} enabled on {{$labels.node}}
+  - alert: ElasticThreadpoolRejected
+    expr: delta(es_threadpool_rejected[1m]) > 0
+    labels:
+      severity: warning
+    annotations:
+      description: Elasticsearch threadpool {{ $labels.threadpool }} rejected {{ $value
+        }} tasks within last minute. Some jobs failed and never will be repeated,
+        it could be a high CPU pressure or
+      summary: Threadpool tasks rejected {{ $labels.threadpool}} at {{$labels.node}}

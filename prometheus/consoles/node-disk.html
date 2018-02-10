@@ -38,6 +38,12 @@
 {{ template "prom_right_table_tail" }}
 
 {{ template "prom_content_head" . }}
+<ol class="breadcrumb">
+  <li><a href="node.html">Node exporter</a></li>
+  <li><a href="node-overview.html?instance={{ .Params.instance }}">Instance {{ reReplaceAll "(.*?://)([^:/]+?)(:\\d+)?/.*" "$2" .Params.instance }}</a></li>
+  <li class="active"><a href="node-disk.html?instance={{ .Params.instance }}">Disks</a></li>
+</ol>
+
   <h1>Node Disk - {{ reReplaceAll "(.*?://)([^:/]+?)(:\\d+)?/.*" "$2" .Params.instance }}</h1>
 
   <h3>Disk I/O Utilization</h3>

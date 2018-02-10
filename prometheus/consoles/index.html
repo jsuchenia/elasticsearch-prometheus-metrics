@@ -13,6 +13,10 @@
   {{ end }}
 {{ end }}
 
+<ol class="breadcrumb">
+  <li class="active"><a href="index.html">Elasticsearch status</a></li>
+</ol>
+
 <h1>Elasticsearch cluster overview</h1>
 {{if printf "up == 0" | query }}
 <div class="alert alert-success" role="alert">Some systems are down, please check them on <a href="/targets">tagrets page</a></div>
@@ -44,6 +48,7 @@
   <th>Cluster status</th>
   <th>CPU %</th>
   <th>Memory %</th>
+  <th>Disk Usage %</th>
 </tr>
 {{ range printf "es_status" | query | sortByLabel "node" }}
   <tr>
@@ -52,6 +57,7 @@
     <td>{{ template "status" .Value}}</td>
     <td>{{template "prom_query_drilldown" args (printf "es_cpu_percentage{node='%s',cluster='%s',}" .Labels.node .Labels.cluster ) "%" ""}}</td>
     <td>{{template "prom_query_drilldown" args (printf "es_jvm_memory_heap_used_percent{node='%s',cluster='%s',}" .Labels.node .Labels.cluster) "%" ""}}</td>
+    <td>{{template "prom_query_drilldown" args (printf "100 - (es_fs_available_bytes{node='%s',cluster='%s',} * 100 / es_fs_total_bytes{node='%s',cluster='%s',})" .Labels.node .Labels.cluster .Labels.node .Labels.cluster) "%" ""}}</td>
   </tr>
 {{ end }}
 </table>

@@ -28,7 +28,7 @@
 {{ define "menu" }}
 <div class="prom_lhs_menu">
 <ul>
-{{ template "_menuItem" (args . "index.html" "Cluster Overview") }}
+{{ template "_menuItem" (args . "index.html" "Elasticsearch") }}
 
 {{ if query "up{job='node'}" }}
 {{ template "_menuItem" (args . "node.html" "Node") }}

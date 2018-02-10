@@ -100,6 +100,12 @@
 </tr>
 {{ template "prom_right_table_tail" }}
 {{ template "prom_content_head" . }}
+
+<ol class="breadcrumb">
+  <li><a href="index.html">Elasticsearch status</a></li>
+  <li class="active"><a href="es.html?node={{ .Params.node | urlquery}}&amp;cluster={{ .Params.cluster | urlquery }}">ES node: {{.Params.node }}</a></li>
+</ol>
+
 <h1>ES node status</h1>
 
 <h3>Documents in cluster</h3>
