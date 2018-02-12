@@ -1,6 +1,4 @@
 language: java
-jdk:
-- oraclejdk9
 services:
   - docker
 
@@ -15,122 +13,142 @@ stages:
 jobs:
   include:
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=6.1.3
-      script:
+        - GRADLE_VERSION=4.5
+      script: &script
       - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=6.1.2
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.5
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=6.1.1
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.5
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=6.1.0
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.5
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=6.0.1
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=6.0.0
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.7
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.5
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.6
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.5
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.5
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.4
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.3
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.2
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.1
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.6.0
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.5.3
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.5.2
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.5.1
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.5.0
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.4.3
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.4.2
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.4.1
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: build
+      jdk: oraclejdk8
       env:
         - ES_VERSION=5.4.0
-      script:
-      - ./gradlew -P esVersion=$ES_VERSION wrapper && ./gradlew -P esVersion=$ES_VERSION -P projectVersion=$TRAVIS_TAG build
-    - stage: build-console
-      script:
-      - cd prometheus && zip -9 -r ../console.zip console*
+        - GRADLE_VERSION=4.0.2
+      script: *script
     - stage: docker
       env:
         - PROMETHEUS_VERSION=v2.1.0
-      script:
+      script: &promscript
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         - cp elastic-rules.rule.yml prometheus/elastic-rules.yml
         - "docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS_VERSION -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS_VERSION-$TRAVIS_TAG prometheus"
@@ -138,11 +156,7 @@ jobs:
     - stage: docker
       env:
         - PROMETHEUS_VERSION=v2.0.0
-      script:
-        - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-        - cp elastic-rules.rule.yml prometheus/elastic-rules.yml
-        - "docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS_VERSION -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS_VERSION-$TRAVIS_TAG prometheus"
-        - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS_VERSION-$TRAVIS_TAG
+      script: *promscript
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -163,7 +177,6 @@ deploy:
   file:
   - build/distributions/*.zip
   - elastic-rules.*
-  - console.zip
   skip_cleanup: true
   on:
     tags: true
