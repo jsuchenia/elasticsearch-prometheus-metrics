@@ -15,27 +15,29 @@ def generatedVersion = "${projectVersion}-${project.esVersion}"
 group 'pl.suchenia.esmonitor'
 version generatedVersion
 
-apply plugin: 'idea'
-apply plugin: 'elasticsearch.esplugin'
+if (!project.hasProperty('skipEsPlugin')) {
+  apply plugin: 'idea'
+  apply plugin: 'elasticsearch.esplugin'
 
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'ElasticSearch Prometheus plugin', 'Implementation-Version': project.version
-    }
-}
+  jar {
+      manifest {
+          attributes 'Implementation-Title': 'ElasticSearch Prometheus plugin', 'Implementation-Version': project.version
+      }
+  }
 
-esplugin {
-    description 'Elasticsearch plugin to export status data in prometheus.io format'
-    classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
-    version generatedVersion
-}
+  esplugin {
+      description 'Elasticsearch plugin to export status data in prometheus.io format'
+      classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
+      version generatedVersion
+  }
 
-licenseHeaders.enabled = false
+  licenseHeaders.enabled = false
 
-if (addLicenseInformation()){
-  project.licenseFile = file("LICENSE.txt")
-  project.noticeFile = file("NOTICE.txt")
-  ext.projectSubstitutions = [:]
+  if (addLicenseInformation()){
+    project.licenseFile = file("LICENSE.txt")
+    project.noticeFile = file("NOTICE.txt")
+    ext.projectSubstitutions = [:]
+  }
 }
 
 repositories {
