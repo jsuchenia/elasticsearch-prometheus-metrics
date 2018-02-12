@@ -15,63 +15,32 @@ def generatedVersion = "${projectVersion}-${project.esVersion}"
 group 'pl.suchenia.esmonitor'
 version generatedVersion
 
-if (!gradleShouldBeDifferent()) {
-  apply plugin: 'idea'
-  apply plugin: 'elasticsearch.esplugin'
+apply plugin: 'idea'
+apply plugin: 'elasticsearch.esplugin'
 
-  jar {
-      manifest {
-          attributes 'Implementation-Title': 'ElasticSearch Prometheus plugin', 'Implementation-Version': project.version
-      }
-  }
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'ElasticSearch Prometheus plugin', 'Implementation-Version': project.version
+    }
+}
 
-  esplugin {
-      description 'Elasticsearch plugin to export status data in prometheus.io format'
-      classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
-      version generatedVersion
-  }
+esplugin {
+    description 'Elasticsearch plugin to export status data in prometheus.io format'
+    classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
+    version generatedVersion
+}
 
-  sourceCompatibility = 1.8
+licenseHeaders.enabled = false
 
-  licenseHeaders.enabled = false
-
-  if (addLicenseInformation()){
-    project.licenseFile = file("LICENSE.txt")
-    project.noticeFile = file("NOTICE.txt")
-    ext.projectSubstitutions = [:]
-  }
+if (addLicenseInformation()){
+  project.licenseFile = file("LICENSE.txt")
+  project.noticeFile = file("NOTICE.txt")
+  ext.projectSubstitutions = [:]
 }
 
 repositories {
     mavenCentral()
     jcenter()
-}
-
-
-task wrapper(type: Wrapper) {
-    gradleVersion = getGradleVersionForEs()
-}
-
-
-def getGradleVersionForEs() {
-   def latestGradle = '4.5'
-
-   def vn = VersionNumber.parse(project.esVersion)
-
-   //Those versions were released after gradle upgrade
-   if (vn >= VersionNumber.parse('5.6.6') && vn.getMajor() == 5) {
-      return latestGradle
-   }
-
-   if (vn < VersionNumber.parse('6.1.0')) {
-      return '4.0.2'
-   }
-
-   return latestGradle
-}
-
-def gradleShouldBeDifferent() {
-    return VersionNumber.parse(getGradleVersionForEs()) != VersionNumber.parse(gradle.gradleVersion)
 }
 
 def addLicenseInformation() {
