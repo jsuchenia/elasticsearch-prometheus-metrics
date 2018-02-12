@@ -164,7 +164,7 @@ jobs:
       script: &promscript
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         - cp elastic-rules.rule.yml prometheus/elastic-rules.yml
-        - "docker build --build-arg PROMETHEUS=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus"
+        - "docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus"
         - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG
     - stage: docker
       env:
