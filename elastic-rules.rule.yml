@@ -182,11 +182,11 @@ groups:
   - alert: ElasticCircuitEnabled
     expr: delta(es_breaker_tripped[1m]) > 0
     labels:
-      severity: warning
+      severity: critical
     annotations:
       description: Elasticsearch circuit breaker {{ $labels.circuit_name }} was enabled
         within last minute on {{$labels.node}} ({{$labels.instance}}). Looks like
-        high memory pressure on this pool
+        high memory pressure on this host ans some data were discarded.
       summary: Circuit breaker {{ $labels.circuit_name}} enabled on {{$labels.node}}
   - alert: ElasticThreadpoolRejected
     expr: delta(es_threadpool_rejected[1m]) > 0
@@ -195,5 +195,6 @@ groups:
     annotations:
       description: Elasticsearch threadpool {{ $labels.threadpool }} rejected {{ $value
         }} tasks within last minute. Some jobs failed and never will be repeated,
-        it could be a high CPU pressure or
+        it could be a high CPU pressure or I/O errors. Please check node and it's
+        state
       summary: Threadpool tasks rejected {{ $labels.threadpool}} at {{$labels.node}}
