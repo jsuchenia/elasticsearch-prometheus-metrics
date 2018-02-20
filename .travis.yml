@@ -6,7 +6,6 @@ dist: trusty
 sudo: false
 stages:
   - build
-  - build-rules
   - build-docker
   - name: release-docker
     if: tag IS present
@@ -160,10 +159,6 @@ jobs:
         - ES=5.4.0
         - GRADLE=4.0.2
       script: *script
-    - stage: build-rules
-      script:
-        - mkdir rules && cp elastic-rules.rule rules/
-        - docker run --rm -it -v "`pwd`/rules:/prometheus:rw" --entrypoint /bin/promtool prom/prometheus update rules elastic-rules.rule
     - stage: build-docker
       env:
         - PROMETHEUS=latest
