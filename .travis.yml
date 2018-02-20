@@ -6,9 +6,10 @@ dist: trusty
 sudo: false
 stages:
   - build
-  - build-docker
+  - name: build-docker
+    if: tag is blank
   - name: release-docker
-    if: tag IS present
+    if: tag is present
 
 jobs:
   include:
@@ -160,17 +161,16 @@ jobs:
         - GRADLE=4.0.2
       script: *script
     - stage: build-docker
-      env:
-        - PROMETHEUS=latest
       script:
         - docker run --rm -it -v "`pwd`/rules:/prometheus" --entrypoint /bin/promtool prom/prometheus update rules elastic-rules.rule
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
-        - docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:latest prometheus-docker
-        - docker push jsuchenia/prometheus-elasticsearch:latest
+        - docker build --build-arg PROMETHEUS_VERSION=latest -t jsuchenia/prometheus-elasticsearch:$TRAVIS_BRANCH prometheus-docker
+        - docker push jsuchenia/prometheus-elasticsearch:$TRAVIS_BRANCH
     - stage: release-docker
       env:
         - PROMETHEUS=v2.1.0
+        = LATEST=true
       script: &promscript
         - mkdir rules && cp elastic-rules.rule rules/
         - docker run --rm -it -v "`pwd`/rules:/prometheus" --entrypoint /bin/promtool prom/prometheus update rules elastic-rules.rule
@@ -178,6 +178,7 @@ jobs:
         - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
         - docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus-docker
         - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG
+        - if [ "$LATEST" == "true" ]; then docker tag jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG jsuchenia/prometheus-elasticsearch:latest && docker push jsuchenia/prometheus-elasticsearch:latest; fi
     - stage: release-docker
       env:
         - PROMETHEUS=v2.0.0
