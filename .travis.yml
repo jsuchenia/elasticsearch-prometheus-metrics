@@ -16,12 +16,18 @@ jobs:
     - stage: build
       jdk: oraclejdk9
       env:
-        - ES=6.2.1
+        - ES=6.2.2
         - GRADLE=4.5.1
       script: &script
       - cd elasticsearch-plugin
       - ./gradlew wrapper --gradle-version $GRADLE -PskipEsPlugin
       - ./gradlew -P esVersion=$ES -P projectVersion=$TRAVIS_TAG build
+    - stage: build
+      jdk: oraclejdk9
+      env:
+        - ES=6.2.1
+        - GRADLE=4.5.1
+      script: *script
     - stage: build
       jdk: oraclejdk9
       env:
