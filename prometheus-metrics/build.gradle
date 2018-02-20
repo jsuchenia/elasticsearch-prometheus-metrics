@@ -34,8 +34,8 @@ if (!project.hasProperty('skipEsPlugin')) {
   licenseHeaders.enabled = false
 
   if (addLicenseInformation()){
-    project.licenseFile = file("LICENSE.txt")
-    project.noticeFile = file("NOTICE.txt")
+    project.licenseFile = file("../LICENSE.txt")
+    project.noticeFile = file("../NOTICE.txt")
     ext.projectSubstitutions = [:]
   }
 }
