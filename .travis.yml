@@ -163,7 +163,7 @@ jobs:
         - PROMETHEUS=v2.1.0
       script: &promscript
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-        - cp elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
+        - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
         - "docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus-docker"
         - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG
     - stage: docker
@@ -189,7 +189,7 @@ deploy:
   file_glob: true
   file:
   - prometheus-metrics/build/distributions/*.zip
-  - elastic-rules.*
+  - rules/*
   skip_cleanup: true
   on:
     tags: true
