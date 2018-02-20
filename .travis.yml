@@ -198,6 +198,8 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 
+before_deploy: cd $TRAVIS_BUILD_DIR
+
 deploy:
   provider: releases
   api_key:
