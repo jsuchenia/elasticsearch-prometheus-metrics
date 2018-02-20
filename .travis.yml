@@ -169,7 +169,7 @@ jobs:
     - stage: release-docker
       env:
         - PROMETHEUS=v2.1.0
-        = LATEST=true
+        - LATEST=true
       script: &promscript
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
