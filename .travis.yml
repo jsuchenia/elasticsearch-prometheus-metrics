@@ -5,7 +5,7 @@ services:
 dist: trusty
 sudo: false
 stages:
-  - build
+  - name: build
   - name: build-docker
     if: tag is blank
   - name: release-docker
@@ -175,7 +175,7 @@ jobs:
         - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
         - docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus-docker
         - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG
-        - if [ "$LATEST" == "true" ]; then docker tag jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG jsuchenia/prometheus-elasticsearch:latest && docker push jsuchenia/prometheus-elasticsearch:latest; fi
+        - 'if [ "$LATEST" == "true" ]; then docker tag jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG jsuchenia/prometheus-elasticsearch:latest && docker push jsuchenia/prometheus-elasticsearch:latest; fi'
     - stage: release-docker
       env:
         - PROMETHEUS=v2.0.0
