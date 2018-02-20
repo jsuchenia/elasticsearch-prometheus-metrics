@@ -164,19 +164,21 @@ jobs:
       script:
         - docker run --rm -it -v "`pwd`/rules:/prometheus" --entrypoint /bin/promtool prom/prometheus update rules elastic-rules.rule
     - stage: build-docker
+      env:
+        - PROMETHEUS=latest
       script:
         - docker run --rm -it -v "`pwd`/rules:/prometheus" --entrypoint /bin/promtool prom/prometheus update rules elastic-rules.rule
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
-        - "docker build --build-arg PROMETHEUS_VERSION=latest -t jsuchenia/prometheus-elasticsearch:latest prometheus-docker"
+        - docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:latest prometheus-docker
         - docker push jsuchenia/prometheus-elasticsearch:latest
     - stage: release-docker
       env:
         - PROMETHEUS=v2.1.0
-      script: *promscript
+      script: &promscript
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
         - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
-        - "docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus-docker"
+        - docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus-docker
         - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG
     - stage: release-docker
       env:
