@@ -109,28 +109,28 @@
 
 <h1>ES node status</h1>
 
-<h3>Documents in cluster</h3>
+<h3>New documents in cluster per second</h3>
 <div id="documentsGraph"></div>
 <script>
 new PromConsole.Graph({
   node: document.querySelector("#documentsGraph"),
-  expr: "es_common_docs_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  expr: "rate(es_common_docs_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
   renderer: 'area',
   yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
-  yTitle: 'Documents'
+  yTitle: 'doc/s'
 })
 </script>
-<h3>Queries in cluster</h3>
+<h3>Queries in cluster per second</h3>
 <div id="queriesGraph"></div>
 <script>
 new PromConsole.Graph({
   node: document.querySelector("#queriesGraph"),
-  expr: "es_search_query_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  expr: "rate(es_search_query_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
   renderer: 'area',
   yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
-  yTitle: 'Queries'
+  yTitle: 'Queries/s'
 })
 </script>
 
@@ -147,16 +147,16 @@ new PromConsole.Graph({
 })
 </script>
 
-<h3>Ingested documents</h3>
+<h3>Ingested documents / sec</h3>
 <div id="ingestGraph"></div>
 <script>
 new PromConsole.Graph({
   node: document.querySelector("#ingestGraph"),
-  expr: "es_ingest_total_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+  expr: "irate(es_ingest_total_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
   renderer: 'line',
   yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
-  yTitle: 'Documents'
+  yTitle: 'Documents / s'
 })
 </script>
 <h3>Tasks in queue</h3>
