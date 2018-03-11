@@ -122,6 +122,9 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writer.addSummary("es_indexing")
                 .withHelp("Indexing latency")
                 .summary(totalStats.getIndexCount(), totalStats.getIndexTime().millis());
+        writer.addSummary("es_delete")
+                .withHelp("Delete latency")
+                .summary(totalStats.getDeleteCount(), totalStats.getDeleteTime().millis());
     }
 
     private void writeDocsStats(PrometheusFormatWriter writer, DocsStats docsStats) {

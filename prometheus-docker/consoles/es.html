@@ -53,6 +53,23 @@
  <td>Querycache bytes</td>
  <td>{{template "prom_query_drilldown" args (printf "es_querycache_size{node='%s',cluster='%s',}" .Params.node .Params.cluster) "b" "humanize"}}</td>
 </tr>
+<tr><th colspan="2">Indexing / Deleting</th></tr>
+<tr>
+    <td>Indexing rate [5m]</td>
+    <td>{{template "prom_query_drilldown" args (printf "rate(es_indexing_sum{node='%s',cluster='%s',}[5m])/rate(es_indexing_count{node='%s',cluster='%s',}[5m])" .Params.node .Params.cluster .Params.node .Params.cluster) "" "humanize"}}</td>
+</tr>
+<tr>
+    <td>Delete rate [5m]</td>
+    <td>{{template "prom_query_drilldown" args (printf "rate(es_delete_sum{node='%s',cluster='%s',}[5m])/rate(es_delete_count{node='%s',cluster='%s',}[5m])" .Params.node .Params.cluster .Params.node .Params.cluster) "" "humanize"}}</td>
+</tr>
+<tr>
+    <td>Flush rate [5m]</td>
+    <td>{{template "prom_query_drilldown" args (printf "rate(es_flush_sum{node='%s',cluster='%s',}[5m])/rate(es_flush_count{node='%s',cluster='%s',}[5m])" .Params.node .Params.cluster .Params.node .Params.cluster) "" "humanize"}}</td>
+</tr>
+<tr>
+    <td>Refresh rate [5m]</td>
+    <td>{{template "prom_query_drilldown" args (printf "rate(es_refresh_sum{node='%s',cluster='%s',}[5m])/rate(es_refresh_count{node='%s',cluster='%s',}[5m])" .Params.node .Params.cluster .Params.node .Params.cluster) "" "humanize"}}</td>
+</tr>
 <tr><th colspan="2">OS</th></tr>
 {{ range printf "es_memory{node='%s',cluster='%s'}" .Params.node .Params.cluster | query }}
  <tr>
