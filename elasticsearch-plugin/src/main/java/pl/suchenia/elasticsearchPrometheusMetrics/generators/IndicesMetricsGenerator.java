@@ -34,6 +34,18 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writeRecoveryStats(writer, indicesStats.getRecoveryStats());
         writeSearchStats(writer, indicesStats.getSearch());
 
+        writer.addSummary("es_flush")
+                .withHelp("Summary of flush operations")
+                .summary(indicesStats.getFlush().getTotal(), indicesStats.getFlush().getTotalTimeInMillis());
+        writer.addSummary("es_refresh")
+                .withHelp("Summary of refresh operations")
+                .summary(indicesStats.getRefresh().getTotal(), indicesStats.getRefresh().getTotalTimeInMillis());
+        writer.addSummary("es_merge")
+                .withHelp("Summary of merge operations")
+                .summary(indicesStats.getMerge().getTotal(), indicesStats.getMerge().getTotalTimeInMillis());
+        writer.addSummary("es_merge_docs")
+                .withHelp("Summary of merge operations per doc")
+                .summary(indicesStats.getMerge().getTotalNumDocs(), indicesStats.getMerge().getTotalTimeInMillis());
         return writer;
     }
 
@@ -92,10 +104,7 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         logger.debug("Dumping data from indexes: {}", indexingStats.getTotal());
 
         IndexingStats.Stats totalStats = indexingStats.getTotal();
-        writer.addCounter("es_indexing_doc_count")
-                    .withHelp("Counter of indexing operations")
-                    .value(totalStats.getIndexCount());
-        writer.addGauge("es_indexing_doc_current")
+        writer.addGauge("es_indexing_current")
                 .withHelp("Number of active index operations")
                 .value(totalStats.getIndexCurrent());
         writer.addCounter("es_indexing_failed_count")
@@ -110,6 +119,9 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writer.addGauge("es_indexng_isthrottled")
                     .withHelp("Flag to check is node throttled")
                     .value(totalStats.isThrottled()? 1.0 : 0.0);
+        writer.addSummary("es_indexing")
+                .withHelp("Indexing latency")
+                .summary(totalStats.getIndexCount(), totalStats.getIndexTime().millis());
     }
 
     private void writeDocsStats(PrometheusFormatWriter writer, DocsStats docsStats) {

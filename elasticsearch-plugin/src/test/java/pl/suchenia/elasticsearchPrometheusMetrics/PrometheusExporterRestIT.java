@@ -26,16 +26,17 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int BREAKER_ENTRIES = 4;
     private static final int FS_ENTRIES = 6;
     private static final int THREAD_ENTRIES = 6;
+    private static final int NODE_OTHER = 4;
 
     private static final int NODE_ENTRIES = TRANSPORT_ENTRIES + JVM_ENTRIES + OS_ENTRIES + INGEST_ENTRIES
-            + PROCESS_ENTRIES + BREAKER_ENTRIES + FS_ENTRIES + INDICES_ENTRIES + THREAD_ENTRIES;
+            + PROCESS_ENTRIES + BREAKER_ENTRIES + FS_ENTRIES + INDICES_ENTRIES + THREAD_ENTRIES + NODE_OTHER;
     private static final int ALL_ENTRIES = NODE_ENTRIES + CLUSTER_HEALTH_ENTRIES
             + CLUSTER_SETTINGS_ENTRIES + TASKS_ENTRIES;
 
     @Before
     public void initDb() throws IOException {
         NStringEntity entity = new NStringEntity("{\"a\": 2}", ContentType.APPLICATION_JSON);
-        client().performRequest("PUT", "/testindex/_doc/1",
+        client().performRequest("PUT", "/testindex/doc/1",
                 Collections.<String, String>emptyMap(), entity);
     }
 
