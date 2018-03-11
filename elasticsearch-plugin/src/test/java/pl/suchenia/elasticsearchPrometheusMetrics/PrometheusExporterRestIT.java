@@ -1,11 +1,15 @@
 package pl.suchenia.elasticsearchPrometheusMetrics;
 
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.test.rest.ESRestTestCase;
+import org.junit.Before;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.stream.Stream;
 
 public class PrometheusExporterRestIT extends ESRestTestCase {
@@ -28,6 +32,12 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int ALL_ENTRIES = NODE_ENTRIES + CLUSTER_HEALTH_ENTRIES
             + CLUSTER_SETTINGS_ENTRIES + TASKS_ENTRIES;
 
+    @Before
+    public void initDb() throws IOException {
+        NStringEntity entity = new NStringEntity("{\"a\": 2}", ContentType.APPLICATION_JSON);
+        client().performRequest("PUT", "/testindex/_doc/1",
+                Collections.<String, String>emptyMap(), entity);
+    }
 
     public void testIfRestEndpointExistsWithProperNumberOfEntries() throws IOException {
         Response response = client().performRequest("GET", "/_prometheus");

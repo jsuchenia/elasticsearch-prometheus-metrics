@@ -89,37 +89,27 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
     }
 
     private void writeIndexingStats(PrometheusFormatWriter writer, IndexingStats indexingStats) {
-        SingleValueWriter es_docindex_count = writer.addCounter("es_docindex_count")
-                .withHelp("Counter of indexing operations");
-        SingleValueWriter es_docindexfailed_count = writer.addCounter("es_docindexfailed_count")
-                .withHelp("Counter of failed indexing operations");
-        SingleValueWriter es_docdelete_count = writer.addCounter("es_docdelete_count")
-                .withHelp("Number of delete operations");
-        SingleValueWriter es_docdelete_current = writer.addGauge("es_docdelete_current")
-                .withHelp("Number of active delete operations");
-        SingleValueWriter es_docindex_current = writer.addGauge("es_docindex_current")
-                .withHelp("Number of active index operations");
-        SingleValueWriter es_docindex_isthrottled = writer.addGauge("es_docindex_isthrottled")
-                .withHelp("Flag to check is node throttled");
+        logger.debug("Dumping data from indexes: {}", indexingStats.getTotal());
 
-        //Index data per each index
-        if (indexingStats.getTypeStats() != null) {
-            logger.debug("Dumping data from indexes: {}", indexingStats.getTypeStats());
-
-            for (Map.Entry<String, IndexingStats.Stats> entry : indexingStats.getTypeStats().entrySet()) {
-                logger.debug("Dumping data from index: {}", entry);
-
-                String index = entry.getKey();
-                IndexingStats.Stats stats = entry.getValue();
-
-                es_docindex_count.value(stats.getIndexCount(), "index", index);
-                es_docindexfailed_count.value(stats.getIndexFailedCount(), "index", index);
-                es_docdelete_count.value(stats.getDeleteCount(), "index", index);
-                es_docdelete_current.value(stats.getDeleteCurrent(), "index", index);
-                es_docindex_current.value(stats.getIndexCurrent(), "index", index);
-                es_docindex_isthrottled.value(stats.isThrottled() ? 1 : 0, "index", index);
-            }
-        }
+        IndexingStats.Stats totalStats = indexingStats.getTotal();
+        writer.addCounter("es_indexing_doc_count")
+                    .withHelp("Counter of indexing operations")
+                    .value(totalStats.getIndexCount());
+        writer.addGauge("es_indexing_doc_current")
+                .withHelp("Number of active index operations")
+                .value(totalStats.getIndexCurrent());
+        writer.addCounter("es_indexing_failed_count")
+                    .withHelp("Counter of failed indexing operations")
+                    .value(totalStats.getIndexFailedCount());
+        writer.addCounter("es_indexing_delete_count")
+                    .withHelp("Number of delete operations")
+                    .value(totalStats.getDeleteCount());
+        writer.addGauge("es_indexing_delete_current")
+                    .withHelp("Number of active delete operations")
+                    .value(totalStats.getDeleteCurrent());
+        writer.addGauge("es_docindex_isthrottled")
+                    .withHelp("Flag to check is node throttled")
+                    .value(totalStats.isThrottled()? 1.0 : 0.0);
     }
 
     private void writeDocsStats(PrometheusFormatWriter writer, DocsStats docsStats) {
