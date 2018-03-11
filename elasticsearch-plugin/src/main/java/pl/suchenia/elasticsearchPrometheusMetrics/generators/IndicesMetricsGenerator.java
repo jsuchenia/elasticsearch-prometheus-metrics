@@ -107,7 +107,7 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writer.addGauge("es_indexing_delete_current")
                     .withHelp("Number of active delete operations")
                     .value(totalStats.getDeleteCurrent());
-        writer.addGauge("es_docindex_isthrottled")
+        writer.addGauge("es_indexng_isthrottled")
                     .withHelp("Flag to check is node throttled")
                     .value(totalStats.isThrottled()? 1.0 : 0.0);
     }

@@ -45,7 +45,7 @@ ALERT ElasticSearchActiveShardsPercentage
 
 # Index parameters
 ALERT ElasticSearchTooManyIndexFailures
-  IF delta(es_docindexfailed_count[1m]) > 0
+  IF delta(es_indexing_failed_count[1m]) > 0
   LABELS {severity="warning"}
   ANNOTATIONS {
     description="There are documents indexing failures on node {{$labels.instance}}. Please check logs to get more details.",
@@ -53,12 +53,12 @@ ALERT ElasticSearchTooManyIndexFailures
   }
 
 ALERT ElasticSearchIndexIsThrootled
-  IF es_docindex_isthrotled > 0
+  IF es_indexng_isthrottled > 0
   FOR 10m
   LABELS {severity="warning"}
   ANNOTATIONS {
-    description="Index {{$labels.index}} is throttled for more than 3minutes. Some documents can be missing from returned results.",
-    summary="Index {{$labels.index}} throttled for more than 3 minutes"
+    description="Index {{$labels.index}} is throttled for more than 10minutes. Some documents can be missing from returned results.",
+    summary="Index {{$labels.index}} throttled for more than 10 minutes"
   }
 
 ALERT ElasticSearchIndexUnassignedShards

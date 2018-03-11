@@ -49,7 +49,7 @@ groups:
         results.
       summary: Non-active shards on {{$labels.cluster}}
   - alert: ElasticSearchTooManyIndexFailures
-    expr: delta(es_docindexfailed_count[1m]) > 0
+    expr: delta(es_indexing_failed_count[1m]) > 0
     labels:
       severity: warning
     annotations:
@@ -57,14 +57,14 @@ groups:
         Please check logs to get more details.
       summary: Indexing failures on {{$labels.instance}}
   - alert: ElasticSearchIndexIsThrootled
-    expr: es_docindex_isthrotled > 0
+    expr: es_indexng_isthrottled > 0
     for: 10m
     labels:
       severity: warning
     annotations:
-      description: Index {{$labels.index}} is throttled for more than 3minutes. Some
+      description: Index {{$labels.index}} is throttled for more than 10minutes. Some
         documents can be missing from returned results.
-      summary: Index {{$labels.index}} throttled for more than 3 minutes
+      summary: Index {{$labels.index}} throttled for more than 10 minutes
   - alert: ElasticSearchIndexUnassignedShards
     expr: es_index_unassigned_shards > 0
     for: 10m
