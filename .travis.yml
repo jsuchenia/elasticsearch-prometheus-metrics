@@ -11,6 +11,18 @@ stages:
   - name: release-docker
     if: tag is present
 
+.esbuild: &script
+  - cd elasticsearch-plugin
+  - ./gradlew wrapper --gradle-version $GRADLE -PskipEsPlugin
+  - ./gradlew -P esVersion=$ES -P projectVersion=$TRAVIS_TAG build
+
+.dockerbuild: &promscript
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
+  - docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus-docker
+  - docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG
+  - 'if [ "$LATEST" == "true" ]; then docker tag jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG jsuchenia/prometheus-elasticsearch:latest && docker push jsuchenia/prometheus-elasticsearch:latest; fi'
+
 jobs:
   include:
     - stage: build
@@ -200,18 +212,6 @@ jobs:
       env:
         - PROMETHEUS=v2.0.0
       script: *promscript
-
-_esbuild: &script
-- cd elasticsearch-plugin
-- ./gradlew wrapper --gradle-version $GRADLE -PskipEsPlugin
-- ./gradlew -P esVersion=$ES -P projectVersion=$TRAVIS_TAG build
-
-_dockerbuild: &promscript
-- docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-- cp rules/elastic-rules.rule.yml prometheus-docker/elastic-rules.yml
-- docker build --build-arg PROMETHEUS_VERSION=$PROMETHEUS -t jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG prometheus-docker
-- docker push jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG
-- 'if [ "$LATEST" == "true" ]; then docker tag jsuchenia/prometheus-elasticsearch:$PROMETHEUS-$TRAVIS_TAG jsuchenia/prometheus-elasticsearch:latest && docker push jsuchenia/prometheus-elasticsearch:latest; fi'
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
