@@ -201,6 +201,11 @@ jobs:
         - docker push jsuchenia/prometheus-elasticsearch:$TRAVIS_BRANCH
     - stage: release-docker
       env:
+        - PROMETHEUS=v2.2.1
+        - LATEST=true
+      script: *promscript
+    - stage: release-docker
+      env:
         - PROMETHEUS=v2.2.0
         - LATEST=true
       script: *promscript
