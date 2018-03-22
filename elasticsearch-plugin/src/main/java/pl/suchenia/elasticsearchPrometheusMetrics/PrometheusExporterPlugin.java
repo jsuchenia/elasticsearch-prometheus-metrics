@@ -22,6 +22,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.FsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IngestMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.NodeUsageGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.PendingTasksMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ProcessMetricsGenerator;
@@ -40,6 +41,7 @@ import static org.elasticsearch.rest.RestRequest.Method.GET;
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getClusterHealth;
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getClusterState;
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getNodeStats;
+import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getNodesUsage;
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getPendingTasks;
 
 public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
@@ -57,6 +59,7 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final CircuitBreakerMetricsGenerator circuitBreakerMetricsGenerator = new CircuitBreakerMetricsGenerator();
     private final FsMetricsGenerator fsMetricsGenerator = new FsMetricsGenerator();
     private final ThreadPoolMetricsGenerator threadPoolMetricsGenerator = new ThreadPoolMetricsGenerator();
+    private final NodeUsageGenerator nodeUsageGenerator = new NodeUsageGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -90,13 +93,22 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
                     .thenCombine(getPendingTasks(client), pendingTasksMetricsGenerator::generateMetrics);
         });
 
+        handlers.put("/_prometheus/rest", (channel, client) -> {
+            logger.debug("Generating node usage results");
+
+
+            return createWriter(client)
+                    .thenCombine(getNodesUsage(client), nodeUsageGenerator::generateMetrics);
+        });
+
         handlers.put("/_prometheus", (channel, client) -> {
             logger.debug("Generating ALL stats in prometheus format");
             return createWriter(client)
                     .thenCombine(getNodeStats(client), this::generateNodeMetrics)
                     .thenCombine(getClusterHealth(client), clusterHealthMetricsGenerator::generateMetrics)
                     .thenCombine(getClusterState(client), clusterStateMetricsGenerator::generateMetrics)
-                    .thenCombine(getPendingTasks(client), pendingTasksMetricsGenerator::generateMetrics);
+                    .thenCombine(getPendingTasks(client), pendingTasksMetricsGenerator::generateMetrics)
+                    .thenCombine(getNodesUsage(client), nodeUsageGenerator::generateMetrics);
         });
     }
 

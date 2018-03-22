@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
-import java.util.stream.Stream;
 
 public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int INFO_ENTRIES = 1;
@@ -27,11 +26,12 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int FS_ENTRIES = 6;
     private static final int THREAD_ENTRIES = 6;
     private static final int NODE_OTHER = 4;
+    private static final int REST_ENTRIES = 1;
 
     private static final int NODE_ENTRIES = TRANSPORT_ENTRIES + JVM_ENTRIES + OS_ENTRIES + INGEST_ENTRIES
             + PROCESS_ENTRIES + BREAKER_ENTRIES + FS_ENTRIES + INDICES_ENTRIES + THREAD_ENTRIES + NODE_OTHER;
     private static final int ALL_ENTRIES = NODE_ENTRIES + CLUSTER_HEALTH_ENTRIES
-            + CLUSTER_SETTINGS_ENTRIES + TASKS_ENTRIES;
+            + CLUSTER_SETTINGS_ENTRIES + TASKS_ENTRIES + REST_ENTRIES;
 
     @Before
     public void initDb() throws IOException {
@@ -73,6 +73,13 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(TASKS_ENTRIES + INFO_ENTRIES, countLines(response));
+    }
+
+    public void testIfRestUsageContainsProperNumberOfEntries() throws IOException {
+        Response response = client().performRequest("GET", "/_prometheus/rest");
+
+        assertEquals(200, response.getStatusLine().getStatusCode());
+        assertEquals(REST_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
     private long countLines(Response response) throws IOException {

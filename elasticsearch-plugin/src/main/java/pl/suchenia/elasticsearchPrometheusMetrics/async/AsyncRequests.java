@@ -3,9 +3,16 @@ package pl.suchenia.elasticsearchPrometheusMetrics.async;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
+import org.elasticsearch.action.admin.cluster.node.hotthreads.NodeHotThreads;
+import org.elasticsearch.action.admin.cluster.node.hotthreads.NodesHotThreadsRequest;
+import org.elasticsearch.action.admin.cluster.node.hotthreads.NodesHotThreadsResponse;
 import org.elasticsearch.action.admin.cluster.node.stats.NodeStats;
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsRequest;
 import org.elasticsearch.action.admin.cluster.node.stats.NodesStatsResponse;
+import org.elasticsearch.action.admin.cluster.node.usage.NodeUsage;
+import org.elasticsearch.action.admin.cluster.node.usage.NodesUsageRequest;
+import org.elasticsearch.action.admin.cluster.node.usage.NodesUsageResponse;
+import org.elasticsearch.action.admin.cluster.node.usage.TransportNodesUsageAction;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateResponse;
 import org.elasticsearch.action.admin.cluster.tasks.PendingClusterTasksRequest;
@@ -45,5 +52,14 @@ public class AsyncRequests {
 
         client.admin().cluster().pendingClusterTasks(request, result.asActionListener());
         return result;
+    }
+
+    public static CompletableFuture<NodeUsage> getNodesUsage(final Client client) {
+        ActionListenerAdapter<NodesUsageResponse> result = new ActionListenerAdapter<>();
+        NodesUsageRequest request = new NodesUsageRequest("_local").all();
+
+        client.admin().cluster().nodesUsage(request, result.asActionListener());
+
+        return result.thenApply((response) -> response.getNodes().get(0));
     }
 }
