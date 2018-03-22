@@ -14,7 +14,7 @@ public class NodeUsageGenerator extends MetricsGenerator<NodeUsage> {
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, NodeUsage nodeUsage) {
         logger.debug("Generating output for REST usage: {}", nodeUsage);
 
-        SingleValueWriter restActions = writer.addCounter("es_rest_actions")
+        SingleValueWriter restActions = writer.addCounter("es_rest_count")
                 .withHelp("Number of REST endpoint executions");
 
         nodeUsage.getRestUsage()
