@@ -14,7 +14,7 @@
 <tr>
   <td>ES Version</td>
   <td>{{ .Labels.es_version}}</td>
-</td>
+</tr>
 <tr>
   <td>Plugin Version</td>
   <td>{{ .Labels.pluginVersion}}</td>
@@ -126,17 +126,36 @@
 
 <h1>ES node status</h1>
 
-<h3>New documents in cluster per second</h3>
+<h3>Documents in cluster per second</h3>
 <div id="documentsGraph"></div>
 <script>
 new PromConsole.Graph({
   node: document.querySelector("#documentsGraph"),
   expr: "rate(es_common_docs_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
+  name: "doc",
   renderer: 'area',
   yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yTitle: 'doc/s'
 })
+</script>
+<h3>Indexing actions per second</h3>
+<div id="docChangesGraph"></div>
+<script>
+    new PromConsole.Graph({
+        node: document.querySelector("#docChangesGraph"),
+        expr: [
+            "rate(es_indexing_sum{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])/rate(es_indexing_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
+            "rate(es_delete_sum{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])/rate(es_delete_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
+            "rate(es_flush_sum{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])/rate(es_flush_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
+            "rate(es_refresh_sum{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])/rate(es_refresh_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
+        ],
+        name: ["Indexing", "Delete", "Flush", "Refresh"],
+        renderer: 'area',
+        yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+        yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+        yTitle: 'doc/s'
+    })
 </script>
 <h3>Queries in cluster per second</h3>
 <div id="queriesGraph"></div>
@@ -144,7 +163,8 @@ new PromConsole.Graph({
 new PromConsole.Graph({
   node: document.querySelector("#queriesGraph"),
   expr: "rate(es_search_query_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
-  renderer: 'area',
+  name: "search",
+  renderer: 'line',
   yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yTitle: 'Queries/s'
@@ -164,18 +184,6 @@ new PromConsole.Graph({
 })
 </script>
 
-<h3>Ingested documents / sec</h3>
-<div id="ingestGraph"></div>
-<script>
-new PromConsole.Graph({
-  node: document.querySelector("#ingestGraph"),
-  expr: "irate(es_ingest_total_count{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[30s])",
-  renderer: 'line',
-  yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
-  yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
-  yTitle: 'Documents / s'
-})
-</script>
 <h3>Tasks in queue</h3>
 <div id="tasksGraph"></div>
 <script>
@@ -187,6 +195,39 @@ new PromConsole.Graph({
   yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
   yTitle: 'Tasks'
 })
+</script>
+<h3>Threads in threadpool</h3>
+<div id="threadpoolGraph"></div>
+<script>
+    new PromConsole.Graph({
+        node: document.querySelector("#threadpoolGraph"),
+        expr: [
+            "es_threadpool_threads{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+            "es_threadpool_active{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}",
+            "es_threadpool_queue{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}"
+        ],
+        name: ["Threads [[ threadpool ]]", "Active [[ threadpool ]]", "Queue [[ threadpool ]]"],
+        renderer: 'threads',
+        yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+        yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+        yTitle: 'Tasks'
+    })
+</script>
+<h3>Tasks in threadpool</h3>
+<div id="threadpooltasksGraph"></div>
+<script>
+    new PromConsole.Graph({
+        node: document.querySelector("#threadpooltasksGraph"),
+        expr: [
+            "irate(es_threadpool_completed{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[1m])",
+            "irate(es_threadpool_rejected{node='{{.Params.node}}',cluster='{{ .Params.cluster }}'}[1m])"
+        ],
+        name: ["Completed [[ threadpool ]]", "Rejected [[ threadpool ]]"],
+        renderer: 'threads',
+        yAxisFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+        yHoverFormatter: PromConsole.NumberFormatter.humanizeNoSmallPrefix,
+        yTitle: 'Tasks/s'
+    })
 </script>
 {{ template "prom_content_tail" . }}
 {{ template "tail" }}

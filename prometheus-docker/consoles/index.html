@@ -40,6 +40,7 @@
   <td>{{ printf "max(es_active_primary_shards{cluster='%s'})" .Labels.cluster |query|first|value}}</td>
 </tr>
 {{ end }}
+</table>
 <h3>Nodes status (only alive nodes are here)</h3>
 <table class="table table-condensed table-striped table-bordered" style="width: 0%">
 <tr>
