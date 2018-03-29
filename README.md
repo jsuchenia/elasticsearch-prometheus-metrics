@@ -78,22 +78,6 @@ docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prome
 * 6.1.0
 * 6.0.1
 * 6.0.0
-* 5.6.7
-* 5.6.6
-* 5.6.5
-* 5.6.4
-* 5.6.3
-* 5.6.2
-* 5.6.1
-* 5.6.0
-* 5.5.3
-* 5.5.2
-* 5.5.1
-* 5.5.0
-* 5.4.3
-* 5.4.2
-* 5.4.1
-* 5.4.0
 
 Generated .zip plugins are available at Releases section of this project (in a future in a maven repository)
 
