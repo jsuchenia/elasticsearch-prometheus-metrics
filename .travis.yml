@@ -28,6 +28,12 @@ jobs:
     - stage: build
       jdk: oraclejdk9
       env:
+        - ES=6.2.4
+        - GRADLE=4.6
+      script: *script
+    - stage: build
+      jdk: oraclejdk9
+      env:
         - ES=6.2.3
         - GRADLE=4.6
       script: *script
