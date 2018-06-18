@@ -26,7 +26,7 @@ stages:
 jobs:
   include:
     - stage: build
-      jdk: oraclejdk9
+      jdk: oraclejdk10
       env:
         - ES=6.3.0
         - GRADLE=4.7
