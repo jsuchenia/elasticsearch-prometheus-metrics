@@ -1,11 +1,9 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.generators;
 
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.Version;
 import org.elasticsearch.common.logging.Loggers;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

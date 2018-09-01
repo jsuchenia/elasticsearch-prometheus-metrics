@@ -2,7 +2,6 @@ package pl.suchenia.elasticsearchPrometheusMetrics.writer;
 
 import org.elasticsearch.test.ESTestCase;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Map;

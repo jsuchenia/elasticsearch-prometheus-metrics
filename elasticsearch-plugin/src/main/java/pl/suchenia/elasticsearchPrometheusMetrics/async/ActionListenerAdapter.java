@@ -1,6 +1,5 @@
 package pl.suchenia.elasticsearchPrometheusMetrics.async;
 
-import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.ActionListener;
 
 import java.util.concurrent.CompletableFuture;

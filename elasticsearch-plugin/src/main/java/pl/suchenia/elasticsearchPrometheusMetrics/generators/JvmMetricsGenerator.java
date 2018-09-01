@@ -6,7 +6,6 @@ import org.elasticsearch.monitor.jvm.JvmStats;
 import org.elasticsearch.monitor.jvm.JvmStats.GarbageCollector;
 import pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
-import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SummaryValueWriter;
 
 /*

@@ -11,13 +11,6 @@ import org.elasticsearch.index.shard.IndexingStats;
 import org.elasticsearch.index.store.StoreStats;
 import org.elasticsearch.indices.NodeIndicesStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
-import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import static javax.management.Query.value;
 
 public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats> {
     private static final Logger logger = Loggers.getLogger(IndicesMetricsGenerator.class);
