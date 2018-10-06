@@ -48,11 +48,13 @@ jobs:
       env:
         - ES=6.3.2
         - GRADLE=4.10.2
+      script: *script
     - stage: build
       jdk: oraclejdk10
       env:
         - ES=6.3.1
         - GRADLE=4.10.2
+      script: *script
     - stage: build
       jdk: oraclejdk10
       env:
