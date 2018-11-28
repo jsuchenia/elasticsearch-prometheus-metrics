@@ -26,49 +26,49 @@ stages:
 jobs:
   include:
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.5.1
         - GRADLE=4.10.2
       script: *script
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.5.0
         - GRADLE=4.10.2
       script: *script
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.4.2
         - GRADLE=4.10.2
       script: *script
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.4.1
         - GRADLE=4.10.2
       script: *script
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.4.0
         - GRADLE=4.10.2
       script: *script
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.3.2
         - GRADLE=4.10.2
       script: *script
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.3.1
         - GRADLE=4.10.2
       script: *script
     - stage: build
-      jdk: oraclejdk10
+      jdk: openjdk10
       env:
         - ES=6.3.0
         - GRADLE=4.10.2
