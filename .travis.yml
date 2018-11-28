@@ -28,6 +28,18 @@ jobs:
     - stage: build
       jdk: oraclejdk10
       env:
+        - ES=6.5.1
+        - GRADLE=4.10.2
+      script: *script
+    - stage: build
+      jdk: oraclejdk10
+      env:
+        - ES=6.5.0
+        - GRADLE=4.10.2
+      script: *script
+    - stage: build
+      jdk: oraclejdk10
+      env:
         - ES=6.4.2
         - GRADLE=4.10.2
       script: *script
@@ -141,8 +153,12 @@ jobs:
         - docker push jsuchenia/prometheus-elasticsearch:$TRAVIS_BRANCH
     - stage: release-docker
       env:
-        - PROMETHEUS=v2.4.3
+        - PROMETHEUS=v2.5.0
         - LATEST=true
+      script: *promscript
+    - stage: release-docker
+      env:
+        - PROMETHEUS=v2.4.3
       script: *promscript
     - stage: release-docker
       env:
@@ -156,35 +172,6 @@ jobs:
       env:
         - PROMETHEUS=v2.4.0
       script: *promscript
-    - stage: release-docker
-      env:
-        - PROMETHEUS=v2.3.2
-      script: *promscript
-    - stage: release-docker
-      env:
-        - PROMETHEUS=v2.3.1
-      script: *promscript
-    - stage: release-docker
-      env:
-        - PROMETHEUS=v2.3.0
-      script: *promscript
-    - stage: release-docker
-      env:
-        - PROMETHEUS=v2.2.1
-      script: *promscript
-    - stage: release-docker
-      env:
-        - PROMETHEUS=v2.2.0
-      script: *promscript
-    - stage: release-docker
-      env:
-        - PROMETHEUS=v2.1.0
-      script: *promscript
-    - stage: release-docker
-      env:
-        - PROMETHEUS=v2.0.0
-      script: *promscript
-
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
