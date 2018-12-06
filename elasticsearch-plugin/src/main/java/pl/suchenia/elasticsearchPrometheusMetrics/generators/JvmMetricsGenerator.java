@@ -19,7 +19,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.SummaryValueWriter;
 
 
 public class JvmMetricsGenerator extends MetricsGenerator<JvmStats> {
-    private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
+    private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class, "init");
 
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, JvmStats jvmStats) {

@@ -13,7 +13,7 @@ import org.elasticsearch.indices.NodeIndicesStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
 public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats> {
-    private static final Logger logger = Loggers.getLogger(IndicesMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(IndicesMetricsGenerator.class, "init");
 
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, NodeIndicesStats indicesStats) {

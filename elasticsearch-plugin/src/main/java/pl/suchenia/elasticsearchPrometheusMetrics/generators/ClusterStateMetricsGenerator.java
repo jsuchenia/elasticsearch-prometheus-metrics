@@ -8,7 +8,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
 public class ClusterStateMetricsGenerator extends MetricsGenerator<ClusterState> {
-    private static final Logger logger = Loggers.getLogger(ClusterStateMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(ClusterStateMetricsGenerator.class, "init");
 
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, ClusterState clusterState) {

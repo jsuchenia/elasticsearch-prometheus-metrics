@@ -6,10 +6,8 @@ import org.elasticsearch.ingest.IngestStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
-import java.util.Map;
-
 public class IngestMetricsGenerator extends MetricsGenerator<IngestStats> {
-    private static final Logger logger = Loggers.getLogger(IngestMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(IngestMetricsGenerator.class, "init");
 
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, IngestStats ingestStats) {
@@ -44,9 +42,9 @@ public class IngestMetricsGenerator extends MetricsGenerator<IngestStats> {
         SingleValueWriter es_ingest_pipeline_failed_count = writer.addGauge("es_ingest_pipeline_failed_count")
                 .withHelp("The total number of ingest preprocessing operations that have failed in pipeline");
 
-        for (Map.Entry<String, IngestStats.Stats> entry : ingestStats.getStatsPerPipeline().entrySet()) {
-            String pipeline = entry.getKey();
-            IngestStats.Stats stats = entry.getValue();
+        for (IngestStats.PipelineStat entry : ingestStats.getPipelineStats()) {
+            String pipeline = entry.getPipelineId();
+            IngestStats.Stats stats = entry.getStats();
 
             es_ingest_pipeline_count.value(stats.getIngestCount(), "pipeline", pipeline);
             es_ingest_pipeline_time_seconds.value(stats.getIngestTimeInMillis() / 1000, "pipeline", pipeline);

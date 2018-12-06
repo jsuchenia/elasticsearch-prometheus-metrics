@@ -10,7 +10,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 import java.util.Map;
 
 public class ClusterHealthMetricsGenerator extends MetricsGenerator<ClusterHealthResponse> {
-    private static final Logger logger = Loggers.getLogger(ClusterHealthMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(ClusterHealthMetricsGenerator.class, "init");
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, ClusterHealthResponse clusterHealth) {
         logger.debug("Generating data about cluster health: {}", clusterHealth);
@@ -62,6 +62,11 @@ public class ClusterHealthMetricsGenerator extends MetricsGenerator<ClusterHealt
         writer.addGauge("es_pending_tasks")
                 .withHelp("Number of tasks pending")
                 .value(clusterHealth.getNumberOfPendingTasks());
+
+        //Tasks data
+        writer.addGauge("es_pending_inflight_fetch")
+                .withHelp("Number of in-flight fetch")
+                .value(clusterHealth.getNumberOfInFlightFetch());
 
         //Cluster status
         writer.addGauge("es_status")

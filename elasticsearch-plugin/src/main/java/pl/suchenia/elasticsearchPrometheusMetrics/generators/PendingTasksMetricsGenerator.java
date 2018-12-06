@@ -10,7 +10,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 import java.util.List;
 
 public class PendingTasksMetricsGenerator extends MetricsGenerator<PendingClusterTasksResponse> {
-    private static final Logger logger = Loggers.getLogger(PendingTasksMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(PendingTasksMetricsGenerator.class, "init");
 
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer,

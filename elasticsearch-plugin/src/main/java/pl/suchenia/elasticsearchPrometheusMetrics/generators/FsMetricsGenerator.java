@@ -8,7 +8,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
 public class FsMetricsGenerator extends MetricsGenerator<FsInfo> {
-    private static final Logger logger = Loggers.getLogger(FsMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(FsMetricsGenerator.class, "init");
     private static final String PATH_LABEL = "path";
 
     @Override

@@ -45,7 +45,7 @@ import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.get
 import static pl.suchenia.elasticsearchPrometheusMetrics.async.AsyncRequests.getPendingTasks;
 
 public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
-    private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class);
+    private static final Logger logger = Loggers.getLogger(PrometheusExporterPlugin.class, "init");
 
     private final JvmMetricsGenerator jvmMetricsGenerator = new JvmMetricsGenerator();
     private final IndicesMetricsGenerator indicesMetricsGenerator = new IndicesMetricsGenerator();

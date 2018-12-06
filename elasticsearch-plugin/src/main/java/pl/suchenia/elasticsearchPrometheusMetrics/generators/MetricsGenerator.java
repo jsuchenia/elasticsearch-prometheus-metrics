@@ -8,7 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class MetricsGenerator<T> {
-    private static final Logger logger = Loggers.getLogger(MetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(MetricsGenerator.class, "init");
 
     static double getDynamicValue(Object obj, String methodName) {
         try {

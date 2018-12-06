@@ -13,7 +13,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 */
 
 public class ProcessMetricsGenerator extends MetricsGenerator<ProcessStats> {
-    private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(OsMetricsGenerator.class, "init");
 
     @Override
     public PrometheusFormatWriter generateMetrics(PrometheusFormatWriter writer, ProcessStats processStats) {

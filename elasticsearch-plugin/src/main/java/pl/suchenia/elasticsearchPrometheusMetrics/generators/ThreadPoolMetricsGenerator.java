@@ -8,7 +8,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
 public class ThreadPoolMetricsGenerator extends MetricsGenerator<ThreadPoolStats> {
-    private static final Logger logger = Loggers.getLogger(ThreadPoolMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(ThreadPoolMetricsGenerator.class, "init");
     private static final String LABEL_NAME = "threadpool";
 
     @Override

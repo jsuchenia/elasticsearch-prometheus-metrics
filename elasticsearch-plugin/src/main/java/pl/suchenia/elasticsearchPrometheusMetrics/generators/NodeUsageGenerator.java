@@ -7,7 +7,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
 public class NodeUsageGenerator extends MetricsGenerator<NodeUsage> {
-    private static final Logger logger = Loggers.getLogger(NodeUsageGenerator.class);
+    private static final Logger logger = Loggers.getLogger(NodeUsageGenerator.class, "init");
     private static final String ENDPOINT_LABEL = "endpoint";
 
     @Override

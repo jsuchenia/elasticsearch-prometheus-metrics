@@ -8,7 +8,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.SingleValueWriter;
 
 public class CircuitBreakerMetricsGenerator extends MetricsGenerator<AllCircuitBreakerStats> {
-    private static final Logger logger = Loggers.getLogger(CircuitBreakerMetricsGenerator.class);
+    private static final Logger logger = Loggers.getLogger(CircuitBreakerMetricsGenerator.class, "init");
     private static final String LABEL_NAME = "circuit_name";
 
     @Override
