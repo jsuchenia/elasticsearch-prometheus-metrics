@@ -32,19 +32,12 @@ if (!project.hasProperty('skipEsPlugin')) {
   }
 
   licenseHeaders.enabled = false
-
-  if (addLicenseInformation()){
-    project.licenseFile = file("../LICENSE.txt")
-    project.noticeFile = file("../NOTICE.txt")
-    ext.projectSubstitutions = [:]
-  }
+  project.licenseFile = file("../LICENSE.txt")
+  project.noticeFile = file("../NOTICE.txt")
+  ext.projectSubstitutions = [:]
 }
 
 repositories {
     mavenCentral()
     jcenter()
-}
-
-def addLicenseInformation() {
- return VersionNumber.parse(project.esVersion) >= VersionNumber.parse('5.5.3')
 }
