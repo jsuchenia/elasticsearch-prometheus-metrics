@@ -4,14 +4,14 @@
 It can deliver basic information about cluster, indices and JVM status in an asynchronous way. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Installation
-To install this plugin just add it into your version of ES. Example for *0.12.0* version for *ES 6.5.1*:
+To install this plugin just add it into your version of ES. Example for *0.13.0* version for *ES 6.6.0*:
 ```
-bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.12.0/prometheus-metrics-0.12.0-6.5.1.zip
+bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.13.0/prometheus-metrics-0.13.0-6.6.0.zip
 ```
 
 and register it in your prometheus & add *rules!!*. Example docker image can be run using a command:
 ```
-  docker run -p 9090:9090 jsuchenia/prometheus-elasticsearch:v2.5.0-0.12.0
+  docker run -p 9090:9090 jsuchenia/prometheus-elasticsearch:v2.7.1-0.13.0
 ```
 and visit [http://localhost:9200](http://localhost:9200)
 
@@ -67,6 +67,10 @@ docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prome
 ```
 
 ## Supported versions by latest releases
+* 6.6.0
+* 6.5.4
+* 6.5.3
+* 6.5.2
 * 6.5.1
 * 6.5.0
 

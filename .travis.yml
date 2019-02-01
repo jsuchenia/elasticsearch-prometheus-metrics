@@ -28,6 +28,30 @@ jobs:
     - stage: build
       jdk: openjdk11
       env:
+        - ES=6.6.0
+        - GRADLE=5.1.1
+      script: *script
+    - stage: build
+      jdk: openjdk11
+      env:
+        - ES=6.5.4
+        - GRADLE=4.10.2
+      script: *script
+    - stage: build
+      jdk: openjdk11
+      env:
+        - ES=6.5.3
+        - GRADLE=4.10.2
+      script: *script
+    - stage: build
+      jdk: openjdk11
+      env:
+        - ES=6.5.2
+        - GRADLE=4.10.2
+      script: *script
+    - stage: build
+      jdk: openjdk11
+      env:
         - ES=6.5.3
         - GRADLE=4.10.2
       script: *script
@@ -57,7 +81,7 @@ jobs:
         - docker push jsuchenia/prometheus-elasticsearch:$TRAVIS_BRANCH
     - stage: release-docker
       env:
-        - PROMETHEUS=v2.5.0
+        - PROMETHEUS=v2.7.1
         - LATEST=true
       script: *promscript
 before_cache:
