@@ -28,12 +28,6 @@ jobs:
     - stage: build
       jdk: openjdk11
       env:
-        - ES=6.7.1
-        - GRADLE=5.4
-      script: *script
-    - stage: build
-      jdk: openjdk11
-      env:
         - ES=6.7.0
         - GRADLE=5.4
       script: *script
