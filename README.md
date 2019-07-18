@@ -66,12 +66,19 @@ And validate them via command:
 docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prometheus check rules elastic-rules.rule.yml
 ```
 
-## Supported versions by latest releases
+## Supported versions by latest releases (7.X will be supported soon)
+* 6.8.2
+* 6.8.1
+* 6.8.0
+* 6.7.2
 * 6.7.1
 * 6.7.0
 * 6.6.2
 * 6.6.1
 * 6.6.0
+
+## Supported prometheus Releases
+* 2.11.1
 
 ## Supported versions in previous releases
 * 6.5.4
