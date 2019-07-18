@@ -29,25 +29,25 @@ jobs:
       jdk: openjdk12
       env:
         - ES=6.8.1
-        - GRADLE=5.4
+        - GRADLE=5.5.1
       script: *script
     - stage: build
       jdk: openjdk12
       env:
         - ES=6.8.0
-        - GRADLE=5.4
+        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk11
+      jdk: openjdk12
       env:
         - ES=6.7.2
-        - GRADLE=5.4
+        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk11
+      jdk: openjdk12
       env:
         - ES=6.7.1
-        - GRADLE=5.4
+        - GRADLE=5.5.1
       script: *script
     - stage: build
       jdk: openjdk11
