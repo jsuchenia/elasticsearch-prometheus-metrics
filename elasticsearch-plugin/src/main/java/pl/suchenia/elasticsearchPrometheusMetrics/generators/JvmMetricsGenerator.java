@@ -88,8 +88,6 @@ public class JvmMetricsGenerator extends MetricsGenerator<JvmStats> {
                 .withHelp("Heap memory of JVM (in percentage)")
                 .value(jvmStats.getMem().getHeapUsedPercent());
 
-        //TODO: memory pools
-
         return writer;
     }
 }

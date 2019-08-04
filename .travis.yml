@@ -67,24 +67,6 @@ jobs:
         - ES=7.0.0
         - GRADLE=5.5.1
       script: *script
-    - stage: build
-      jdk: openjdk12
-      env:
-        - ES=6.8.2
-        - GRADLE=5.5.1
-      script: *script
-    - stage: build
-      jdk: openjdk12
-      env:
-        - ES=6.8.1
-        - GRADLE=5.5.1
-      script: *script
-    - stage: build
-      jdk: openjdk12
-      env:
-        - ES=6.8.0
-        - GRADLE=5.5.1
-      script: *script
     - stage: build-docker
       script:
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"

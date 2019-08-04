@@ -19,6 +19,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.CircuitBreakerMetri
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterHealthMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ClusterStateMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.FsMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.HttpMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IndicesMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.IngestMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.JvmMetricsGenerator;
@@ -26,6 +27,7 @@ import pl.suchenia.elasticsearchPrometheusMetrics.generators.NodeUsageGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.OsMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.PendingTasksMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ProcessMetricsGenerator;
+import pl.suchenia.elasticsearchPrometheusMetrics.generators.StriptsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.ThreadPoolMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.generators.TransportMetricsGenerator;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
@@ -60,6 +62,8 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
     private final FsMetricsGenerator fsMetricsGenerator = new FsMetricsGenerator();
     private final ThreadPoolMetricsGenerator threadPoolMetricsGenerator = new ThreadPoolMetricsGenerator();
     private final NodeUsageGenerator nodeUsageGenerator = new NodeUsageGenerator();
+    private final HttpMetricsGenerator httpMetricsGenerator = new HttpMetricsGenerator();
+    private final StriptsGenerator scriptsGenerator = new StriptsGenerator();
 
     private final Map<String, StringBufferedRestHandler> handlers = new HashMap<>();
 
@@ -137,6 +141,8 @@ public class PrometheusExporterPlugin extends Plugin implements ActionPlugin {
         circuitBreakerMetricsGenerator.generateMetrics(writer, nodeStats.getBreaker());
         fsMetricsGenerator.generateMetrics(writer, nodeStats.getFs());
         threadPoolMetricsGenerator.generateMetrics(writer, nodeStats.getThreadPool());
+        httpMetricsGenerator.generateMetrics(writer, nodeStats.getHttp());
+        scriptsGenerator.generateMetrics(writer, nodeStats.getScriptStats());
 
         return writer;
     }

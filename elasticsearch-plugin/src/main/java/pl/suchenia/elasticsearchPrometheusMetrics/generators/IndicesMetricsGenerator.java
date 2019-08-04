@@ -9,6 +9,7 @@ import org.elasticsearch.index.search.stats.SearchStats;
 import org.elasticsearch.index.shard.DocsStats;
 import org.elasticsearch.index.shard.IndexingStats;
 import org.elasticsearch.index.store.StoreStats;
+import org.elasticsearch.index.translog.TranslogStats;
 import org.elasticsearch.indices.NodeIndicesStats;
 import pl.suchenia.elasticsearchPrometheusMetrics.writer.PrometheusFormatWriter;
 
@@ -26,6 +27,7 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writeQueryCacheStats(writer, indicesStats.getQueryCache());
         writeRecoveryStats(writer, indicesStats.getRecoveryStats());
         writeSearchStats(writer, indicesStats.getSearch());
+        writeTransLogStats(writer, indicesStats.getTranslog());
 
         writer.addSummary("es_flush")
                 .withHelp("Summary of flush operations")
@@ -40,6 +42,24 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
                 .withHelp("Summary of merge operations per doc")
                 .summary(indicesStats.getMerge().getTotalNumDocs(), indicesStats.getMerge().getTotalTimeInMillis());
         return writer;
+    }
+
+    private void writeTransLogStats(PrometheusFormatWriter writer, TranslogStats translog) {
+        writer.addGauge("es_translog_size_bytes")
+                .withHelp("Size of translog queue")
+                .value(translog.getTranslogSizeInBytes());
+
+        writer.addGauge("es_translog_uncommited_opertations")
+                .withHelp("Number of uncommited operations")
+                .value(translog.getUncommittedOperations());
+
+        writer.addGauge("es_translog_uncommited_size_bytes")
+                .withHelp("Size of uncommited operations")
+                .value(translog.getUncommittedSizeInBytes());
+
+        writer.addGauge("es_translog_earliest_last_modified")
+                .withHelp("Age of earliest last modified document")
+                .value(translog.getEarliestLastModifiedAge());
     }
 
     private void writeSearchStats(PrometheusFormatWriter writer, SearchStats search) {
@@ -59,6 +79,10 @@ public class IndicesMetricsGenerator extends  MetricsGenerator<NodeIndicesStats>
         writer.addGauge("es_recovery_target")
                 .withHelp("Number of ongoing recoveries for which a shard serves as a target")
                 .value(recoveryStats.currentAsTarget());
+
+        writer.addGauge("es_recovery_throttletime_ms")
+                .withHelp("Throttle time of pending recovery")
+                .value(recoveryStats.throttleTime().millis());
     }
 
     private void writeQueryCacheStats(PrometheusFormatWriter writer, QueryCacheStats queryCache) {
