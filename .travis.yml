@@ -28,6 +28,54 @@ jobs:
     - stage: build
       jdk: openjdk12
       env:
+        - ES=7.3.0
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
+        - ES=7.2.1
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
+        - ES=7.2.0
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
+        - ES=7.1.1
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
+        - ES=7.1.0
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
+        - ES=7.0.1
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
+        - ES=7.0.0
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
+        - ES=6.8.2
+        - GRADLE=5.5.1
+      script: *script
+    - stage: build
+      jdk: openjdk12
+      env:
         - ES=6.8.1
         - GRADLE=5.5.1
       script: *script
@@ -36,42 +84,6 @@ jobs:
       env:
         - ES=6.8.0
         - GRADLE=5.5.1
-      script: *script
-    - stage: build
-      jdk: openjdk12
-      env:
-        - ES=6.7.2
-        - GRADLE=5.5.1
-      script: *script
-    - stage: build
-      jdk: openjdk12
-      env:
-        - ES=6.7.1
-        - GRADLE=5.5.1
-      script: *script
-    - stage: build
-      jdk: openjdk11
-      env:
-        - ES=6.7.0
-        - GRADLE=5.4
-      script: *script
-    - stage: build
-      jdk: openjdk11
-      env:
-        - ES=6.6.2
-        - GRADLE=5.4
-      script: *script
-    - stage: build
-      jdk: openjdk11
-      env:
-        - ES=6.6.1
-        - GRADLE=5.4
-      script: *script
-    - stage: build
-      jdk: openjdk11
-      env:
-        - ES=6.6.0
-        - GRADLE=5.4
       script: *script
     - stage: build-docker
       script:

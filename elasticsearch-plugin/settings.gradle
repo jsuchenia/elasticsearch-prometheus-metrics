@@ -1,1 +1,3 @@
 rootProject.name = "prometheus-metrics"
+//Temporary fix for 7.3.0
+include ':rest-api-spec'

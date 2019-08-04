@@ -28,13 +28,20 @@ if (!project.hasProperty('skipEsPlugin')) {
   esplugin {
       description 'Elasticsearch plugin to export status data in prometheus.io format'
       classname 'pl.suchenia.elasticsearchPrometheusMetrics.PrometheusExporterPlugin'
+      licenseFile file("../LICENSE.txt")
+      noticeFile file("../NOTICE.txt")
+      licenseHeaders.enabled = false
       version generatedVersion
   }
 
-  licenseHeaders.enabled = false
-  project.licenseFile = file("../LICENSE.txt")
-  project.noticeFile = file("../NOTICE.txt")
   ext.projectSubstitutions = [:]
+}
+
+// Temporary fix for 7.3.0 https://github.com/elastic/elasticsearch/issues/45073
+configurations.all {
+    resolutionStrategy.dependencySubstitution {
+        substitute project(':rest-api-spec') with module ("org.elasticsearch:rest-api-spec:${project.esVersion}")
+    }
 }
 
 repositories {

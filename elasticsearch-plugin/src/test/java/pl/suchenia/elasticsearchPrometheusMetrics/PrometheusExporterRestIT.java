@@ -2,6 +2,7 @@ package pl.suchenia.elasticsearchPrometheusMetrics;
 
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.test.rest.ESRestTestCase;
 import org.junit.Before;
@@ -9,7 +10,6 @@ import org.junit.Before;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 
 public class PrometheusExporterRestIT extends ESRestTestCase {
     private static final int INFO_ENTRIES = 1;
@@ -35,53 +35,56 @@ public class PrometheusExporterRestIT extends ESRestTestCase {
 
     @Before
     public void initDb() throws IOException {
-        NStringEntity entity = new NStringEntity("{\"a\": 2}", ContentType.APPLICATION_JSON);
-        client().performRequest("PUT", "/testindex/doc/1",
-                Collections.<String, String>emptyMap(), entity);
+        Request request = new Request("PUT", "/testindex/_doc/1");
+        request.setEntity(new NStringEntity("{\"a\": 2}", ContentType.APPLICATION_JSON));
+        client().performRequest(request);
     }
 
     public void testIfRestEndpointExistsWithProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus");
+        Response response = aRequest("GET", "/_prometheus");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(ALL_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
     public void testIfNodeContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/node");
+        Response response = aRequest("GET", "/_prometheus/node");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(NODE_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
     public void testIfClusterContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/cluster");
+        Response response = aRequest("GET", "/_prometheus/cluster");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(CLUSTER_HEALTH_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
     public void testIfSettingsContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/cluster_settings");
+        Response response = aRequest("GET", "/_prometheus/cluster_settings");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(CLUSTER_SETTINGS_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
     public void testIfPendingTasksContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/tasks");
+        Response response = aRequest("GET", "/_prometheus/tasks");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(TASKS_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
     public void testIfRestUsageContainsProperNumberOfEntries() throws IOException {
-        Response response = client().performRequest("GET", "/_prometheus/rest");
+        Response response = aRequest("GET", "/_prometheus/rest");
 
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(REST_ENTRIES + INFO_ENTRIES, countLines(response));
     }
 
+    private Response aRequest(String method, String endpoint) throws IOException {
+        return client().performRequest(new Request(method, endpoint));
+    }
     private long countLines(Response response) throws IOException {
         return new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"))
                 .lines()
