@@ -4,14 +4,14 @@
 It can deliver basic information about cluster, indices and JVM status in an asynchronous way. Just add it as a target endpoint and start collecting data from the internal status metrics of elasticsearch database.
 
 ## Installation
-To install this plugin just add it into your version of ES. Example for *0.14.0* version for *ES 7.3.0*:
+To install this plugin just add it into your version of ES. Example for *0.15.0* version for *ES 7.4.2*:
 ```
-bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.13.3/prometheus-metrics-0.14.0-7.3.0.zip
+bin/elasticsearch-plugin install https://github.com/jsuchenia/elasticsearch-prometheus-metrics/releases/download/0.13.3/prometheus-metrics-0.15.0-7.4.2.zip
 ```
 
 and register it in your prometheus & add *rules!!*. Example docker image can be run using a command:
 ```
-  docker run -p 9090:9090 jsuchenia/prometheus-elasticsearch:v2.11.1-0.14.0
+  docker run -p 9090:9090 jsuchenia/prometheus-elasticsearch:v2.15.1-0.15.0
 ```
 and visit [http://localhost:9200](http://localhost:9200)
 
@@ -66,19 +66,24 @@ And validate them via command:
 docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prometheus check rules elastic-rules.rule.yml
 ```
 
-## Supported versions by latest releases (only 7.X)
+## Supported versions by latest releases (only 7.3.X and above)
+* 7.5.1
+* 7.4.2
+* 7.4.1
+* 7.4.0
+* 7.3.2
 * 7.3.0
+
+## Supported prometheus Releases
+* 2.11.1
+
+## Supported versions in previous releases
 * 7.2.1
 * 7.2.0
 * 7.1.1
 * 7.1.0
 * 7.0.1
 * 7.0.0
-
-## Supported prometheus Releases
-* 2.11.1
-
-## Supported versions in previous releases
 * 6.8.1
 * 6.8.0
 * 6.7.2

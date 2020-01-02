@@ -28,37 +28,27 @@ jobs:
     - stage: build
       jdk: openjdk13
       env:
+        - ES=7.4.2
+      script: *script
+    - stage: build
+      jdk: openjdk13
+      env:
+        - ES=7.4.1
+      script: *script
+    - stage: build
+      jdk: openjdk13
+      env:
+        - ES=7.4.0
+      script: *script
+    - stage: build
+      jdk: openjdk13
+      env:
+        - ES=7.3.2
+      script: *script
+    - stage: build
+      jdk: openjdk13
+      env:
         - ES=7.3.0
-      script: *script
-    - stage: build
-      jdk: openjdk13
-      env:
-        - ES=7.2.1
-      script: *script
-    - stage: build
-      jdk: openjdk13
-      env:
-        - ES=7.2.0
-      script: *script
-    - stage: build
-      jdk: openjdk13
-      env:
-        - ES=7.1.1
-      script: *script
-    - stage: build
-      jdk: openjdk13
-      env:
-        - ES=7.1.0
-      script: *script
-    - stage: build
-      jdk: openjdk13
-      env:
-        - ES=7.0.1
-      script: *script
-    - stage: build
-      jdk: openjdk13
-      env:
-        - ES=7.0.0
       script: *script
     - stage: build-docker
       script:
@@ -68,7 +58,7 @@ jobs:
         - docker push jsuchenia/prometheus-elasticsearch:$TRAVIS_BRANCH
     - stage: release-docker
       env:
-        - PROMETHEUS=v2.11.1
+        - PROMETHEUS=v2.15.1
         - LATEST=true
       script: *promscript
 before_cache:

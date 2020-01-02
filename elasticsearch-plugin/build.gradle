@@ -34,14 +34,13 @@ if (!project.hasProperty('skipEsPlugin')) {
       version generatedVersion
   }
 
-  ext.projectSubstitutions = [:]
-}
-
-// Temporary fix for 7.3.0 https://github.com/elastic/elasticsearch/issues/45073
-configurations.all {
-    resolutionStrategy.dependencySubstitution {
-        substitute project(':rest-api-spec') with module ("org.elasticsearch:rest-api-spec:${project.esVersion}")
+  configurations.whenObjectAdded { c ->
+    if (c.name == 'elasticsearch_7.5.0_integ_test_zip_null') {
+      project.dependencies.add('elasticsearch_7.5.0_integ_test_zip_null', 'org.elasticsearch.distribution.integ-test-zip:elasticsearch:7.5.0@zip')
     }
+  }
+
+  ext.projectSubstitutions = [:]
 }
 
 repositories {
