@@ -45,11 +45,6 @@ jobs:
       env:
         - ES=7.3.2
       script: *script
-    - stage: build
-      jdk: openjdk13
-      env:
-        - ES=7.3.0
-      script: *script
     - stage: build-docker
       script:
         - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"

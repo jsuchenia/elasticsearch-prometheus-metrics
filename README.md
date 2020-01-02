@@ -72,12 +72,12 @@ docker run --rm -it -v "`pwd`:/prometheus" --entrypoint /bin/promtool prom/prome
 * 7.4.1
 * 7.4.0
 * 7.3.2
-* 7.3.0
 
 ## Supported prometheus Releases
 * 2.11.1
 
 ## Supported versions in previous releases
+* 7.3.0
 * 7.2.1
 * 7.2.0
 * 7.1.1
