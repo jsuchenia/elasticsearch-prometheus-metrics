@@ -13,7 +13,7 @@ stages:
 
 .esbuild: &script
   - cd elasticsearch-plugin
-  - ./gradlew wrapper --gradle-version $GRADLE -PskipEsPlugin
+  - ./gradlew wrapper --gradle-version 6.0.1 -PskipEsPlugin
   - ./gradlew -P esVersion=$ES -P projectVersion=$TRAVIS_TAG build
 
 .dockerbuild: &promscript
@@ -26,46 +26,39 @@ stages:
 jobs:
   include:
     - stage: build
-      jdk: openjdk12
+      jdk: openjdk13
       env:
         - ES=7.3.0
-        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk12
+      jdk: openjdk13
       env:
         - ES=7.2.1
-        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk12
+      jdk: openjdk13
       env:
         - ES=7.2.0
-        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk12
+      jdk: openjdk13
       env:
         - ES=7.1.1
-        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk12
+      jdk: openjdk13
       env:
         - ES=7.1.0
-        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk12
+      jdk: openjdk13
       env:
         - ES=7.0.1
-        - GRADLE=5.5.1
       script: *script
     - stage: build
-      jdk: openjdk12
+      jdk: openjdk13
       env:
         - ES=7.0.0
-        - GRADLE=5.5.1
       script: *script
     - stage: build-docker
       script:
